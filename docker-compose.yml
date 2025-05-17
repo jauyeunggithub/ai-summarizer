@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    restart: always
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx_letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx_proxy
+    volumes:
+      - ./certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - nginx-proxy
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: vue_app
+    environment:
+      - VIRTUAL_HOST=example.com
+      - LETSENCRYPT_HOST=example.com
+      - LETSENCRYPT_EMAIL=your-email@example.com
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: flask_api
+    volumes:
+      - ./backend:/app
+    command: flask run --host=0.0.0.0 --port=5000
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:6000/postgres
+      - RABBITMQ_HOST=rabbitmq
+      - VIRTUAL_HOST=api.example.com
+      - LETSENCRYPT_HOST=api.example.com
+      - LETSENCRYPT_EMAIL=your-email@example.com
+    secrets:
+      - db_password
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - rabbitmq
+    restart: always
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "6000:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  postgres_data:
