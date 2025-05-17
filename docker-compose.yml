@@ -46,7 +46,6 @@ services:
       - ./backend:/app
     command: flask run --host=0.0.0.0 --port=5000
     environment:
-      - FLASK_APP=app.py
       - FLASK_ENV=development
       - FLASK_DEBUG=1
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:6000/postgres
