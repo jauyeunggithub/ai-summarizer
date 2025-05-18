@@ -1,5 +1,5 @@
-import pika
 import time
+from helpers.queue import channel, QUEUE_NAME
 
 
 def callback(ch, method, properties, body):
@@ -10,15 +10,10 @@ def callback(ch, method, properties, body):
 
 
 def consume():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='rabbitmq')
-    )
-    channel = connection.channel()
-
-    channel.queue_declare(queue='task_queue', durable=True)
+    channel.queue_declare(queue=QUEUE_NAME, durable=True)
 
     channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(queue='task_queue',
+    channel.basic_consume(queue=QUEUE_NAME,
                           on_message_callback=callback, auto_ack=True)
 
     print(' [*] Waiting for messages. To exit press CTRL+C')

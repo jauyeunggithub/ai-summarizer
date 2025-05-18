@@ -83,5 +83,20 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  rabbitmq_listener:
+    build: ./backend
+    container_name: rabbitmq_listener
+    command: python consumer.py
+    volumes:
+      - ./backend:/app
+      - ./secrets:/run/secrets:ro
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
+    depends_on:
+      - rabbitmq
+      - db
+    restart: always
+
 volumes:
   postgres_data:

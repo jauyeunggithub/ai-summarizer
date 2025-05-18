@@ -7,3 +7,4 @@
 /secrets/db_password.txt
 /backend/blueprints/__pycache__/*.pyc
 /backend/repos/__pycache__/*.pyc
+/backend/helpers/__pycache__/*.pyc
