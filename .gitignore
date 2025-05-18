@@ -1,3 +1,7 @@
 /backend/__pycache__/*.pyc
 /certs/dhparam.pem
 /nginx/conf.d/default.conf
+/backend/alembic/versions/__pycache__/*.pyc
+/backend/models/__pycache__/*.pyc
+/backend/alembic/__pycache__/*.pyc
+/secrets/db_password.txt
