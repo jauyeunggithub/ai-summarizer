@@ -1,9 +1,9 @@
 import stripe
+import os
 
 
-with open("/run/secrets/stripe_secret_key.txt", "r") as secret_file:
-    stripe_secret_key = secret_file.read().strip()
-    stripe.api_key = stripe_secret_key
+stripe_secret_key = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = stripe_secret_key
 
 
 def get_active_prices(limit=10):

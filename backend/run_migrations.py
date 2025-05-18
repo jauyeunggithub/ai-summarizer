@@ -1,12 +1,9 @@
 from alembic import command
 from alembic.config import Config
+import os
 
 
-with open("/run/secrets/db_password.txt", "r") as secret_file:
-    db_password = secret_file.read().strip()
-
-db_url = f"postgresql://postgres:{db_password}@db:5432/postgres"
-
+db_url = os.getenv('DATABASE_URL')
 config = Config("alembic.ini")
 config.set_main_option("sqlalchemy.url", db_url)
 

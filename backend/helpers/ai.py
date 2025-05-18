@@ -1,10 +1,10 @@
 import PyPDF2
 import openai
 import docx
+import os
 
 
-with open("/run/secrets/openai_api_key.txt", "r") as secret_file:
-    openai.api_key = secret_file.read().strip()
+openai.api_key = os.getenv('OPEN_API_KEY')
 
 
 def get_summary(text):

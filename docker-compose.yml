@@ -54,9 +54,12 @@ services:
       - VIRTUAL_HOST=api.summarizerai.online
       - LETSENCRYPT_HOST=api.summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
-      - JWT_SECRET_KEY=O7DbZ28JxKPiwZbT4zqkxoTf47pPUFJpXeG0jiNRjC0=
-      - AWS_REGION=us-east-1
-      - AWS_ACCESS_KEY=AKIAW4MD2UWQUMJEOM6P
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - OPEN_API_KEY=${OPEN_API_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     ports:
       - "5000:5000"
     depends_on:

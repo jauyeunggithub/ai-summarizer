@@ -3,8 +3,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 import os
 
 aws_access_key = os.getenv('AWS_ACCESS_KEY')
-with open("/run/secrets/aws_secret_access_key.txt", "r") as secret_file:
-    aws_secret_access_key = secret_file.read().strip()
+aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 s3 = boto3.client(
     's3',
