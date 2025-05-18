@@ -1,6 +1,34 @@
 version: "3.9"
 
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    restart: always
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx_letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx_proxy
+      - NGINX_DOCKER_GEN_CONTAINER=nginx_proxy
+    volumes:
+      - ./certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - nginx-proxy
+    restart: always
+
   frontend:
     build: ./frontend
     container_name: vue_app
@@ -13,15 +41,16 @@ services:
     restart: always
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod # Use the production Dockerfile
     container_name: flask_api
     volumes:
       - ./backend:/app
       - ./secrets:/run/secrets:ro
-    command: flask run --host=0.0.0.0 --port=5000
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
       - VIRTUAL_HOST=api.summarizerai.online
       - LETSENCRYPT_HOST=api.summarizerai.online
@@ -34,8 +63,6 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - MAX_FILE_SIZE_MB=2
-    ports:
-      - "5000:5000"
     depends_on:
       - db
     restart: always
@@ -54,9 +81,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   celery_worker:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod # Use the same production Dockerfile for celery worker
     container_name: celery_worker
-    command: celery -A tasks worker --loglevel=info --pool=solo
+    command: celery -A tasks worker --loglevel=info
     volumes:
       - ./backend:/app
       - ./secrets:/run/secrets:ro
