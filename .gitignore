@@ -5,3 +5,5 @@
 /backend/models/__pycache__/*.pyc
 /backend/alembic/__pycache__/*.pyc
 /secrets/db_password.txt
+/backend/blueprints/__pycache__/*.pyc
+/backend/repos/__pycache__/*.pyc

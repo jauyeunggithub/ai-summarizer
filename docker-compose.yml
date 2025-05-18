@@ -55,12 +55,15 @@ services:
       - VIRTUAL_HOST=api.example.com
       - LETSENCRYPT_HOST=api.example.com
       - LETSENCRYPT_EMAIL=your-email@example.com
+      - JWT_SECRET_KEY=O7DbZ28JxKPiwZbT4zqkxoTf47pPUFJpXeG0jiNRjC0=
     ports:
       - "5000:5000"
     depends_on:
       - db
       - rabbitmq
     restart: always
+    stdin_open: true
+    tty: true
 
   db:
     image: postgres:15
