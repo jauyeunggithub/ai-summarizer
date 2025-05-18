@@ -10,3 +10,4 @@
 /backend/helpers/__pycache__/*.pyc
 /backend/background_tasks/__pycache__/*.pyc
 /.env
+/.env.prod
