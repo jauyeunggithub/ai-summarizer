@@ -84,7 +84,7 @@ services:
   celery_worker:
     build: ./backend
     container_name: celery_worker
-    command: celery -A tasks worker --loglevel=info --pool=solo
+    command: celery -A tasks worker --loglevel=info --pool=${CELERY_POOL:-solo}
     volumes:
       - ./backend:/app
       - ./secrets:/run/secrets:ro
@@ -99,6 +99,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - MAX_FILE_SIZE_MB=2
+      - CELERY_POOL=${CELERY_POOL:-solo}
     depends_on:
       - backend
       - redis
