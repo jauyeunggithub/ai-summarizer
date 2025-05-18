@@ -51,7 +51,6 @@ services:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
-      - RABBITMQ_HOST=rabbitmq
       - VIRTUAL_HOST=api.example.com
       - LETSENCRYPT_HOST=api.example.com
       - LETSENCRYPT_EMAIL=your-email@example.com
@@ -60,7 +59,6 @@ services:
       - "5000:5000"
     depends_on:
       - db
-      - rabbitmq
     restart: always
     stdin_open: true
     tty: true
@@ -76,27 +74,33 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
-  rabbitmq_listener:
+  celery_worker:
     build: ./backend
-    container_name: rabbitmq_listener
-    command: python consumer.py
+    container_name: celery_worker
+    command: celery -A tasks worker --loglevel=info
     volumes:
       - ./backend:/app
       - ./secrets:/run/secrets:ro
     environment:
-      - RABBITMQ_HOST=rabbitmq
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - rabbitmq
+      - backend
+      - redis
       - db
     restart: always
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
 
 volumes:
   postgres_data:

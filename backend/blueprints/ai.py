@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from helpers.ai import generate_ai_summary
+from background_tasks.ai_summary import generate_ai_summary
 
 
 ai_blueprint = Blueprint('ai', __name__)
