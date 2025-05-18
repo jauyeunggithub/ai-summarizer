@@ -1,5 +1,5 @@
-from models.user import User
-from db import session
+from ..models.user import User
+from ..db import session
 
 
 def get_user(email):

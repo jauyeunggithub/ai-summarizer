@@ -1,6 +1,6 @@
-from tasks import celery_instance
+from ..tasks import celery
 
 
-@celery_instance.task
+@celery.task
 def generate_ai_summary(data):
     print(f"Processing {data}")
