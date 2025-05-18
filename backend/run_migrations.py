@@ -1,7 +1,6 @@
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import create_engine
-from models.base import Base
+
 
 with open("/run/secrets/db_password.txt", "r") as secret_file:
     db_password = secret_file.read().strip()
