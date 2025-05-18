@@ -21,8 +21,9 @@ def create_subscription_view():
     data = request.get_json()
     email = data.get('email')
     payment_method_id = data.get('payment_method_id')
-    create_customer_with_payment_method(email, payment_method_id)
-    create_subscription()
+    price_id = data.get('price_id')
+    customer = create_customer_with_payment_method(email, payment_method_id)
+    create_subscription(customer.id, payment_method_id, price_id)
     return jsonify(), 200
 
 

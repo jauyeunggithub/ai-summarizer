@@ -60,6 +60,8 @@ services:
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - OPEN_API_KEY=${OPEN_API_KEY}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - MAX_FILE_SIZE_MB=2
     ports:
       - "5000:5000"
     depends_on:
@@ -89,7 +91,14 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
       - REDIS_URL=redis://redis:6379/0
-      - AWS_REGION=us-east-1
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - OPEN_API_KEY=${OPEN_API_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - MAX_FILE_SIZE_MB=2
     depends_on:
       - backend
       - redis
