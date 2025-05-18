@@ -1,11 +1,12 @@
 from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.dialects.postgresql import UUID
 from ..models.base import Base
 
 
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     email = Column(String(300), unique=True, nullable=False)
     first_name = Column(String(300), nullable=False)
     last_name = Column(String(300), nullable=False)
