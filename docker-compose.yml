@@ -79,7 +79,7 @@ services:
   celery_worker:
     build: ./backend
     container_name: celery_worker
-    command: celery -A tasks worker --loglevel=info
+    command: celery -A tasks worker --loglevel=info --pool=solo
     volumes:
       - ./backend:/app
       - ./secrets:/run/secrets:ro
@@ -92,6 +92,8 @@ services:
       - redis
       - db
     restart: always
+    stdin_open: true
+    tty: true
 
   redis:
     image: redis:7
