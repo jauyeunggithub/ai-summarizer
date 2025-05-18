@@ -6,6 +6,12 @@ def get_summary(id):
     return session.query(Summary).filter(Summary.id == id).first()
 
 
+def get_paginated_summary_results(page=1, per_page=10):
+    query = session.query(Summary)
+    results = query.offset((page - 1) * per_page).limit(per_page).all()
+    return results
+
+
 def create_summary(**args):
     new_summary = Summary(**args)
     session.add(new_summary)

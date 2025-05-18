@@ -31,6 +31,26 @@ def get_active_prices(limit=10):
         return {"error": str(e)}
 
 
+def get_subscription_status(subscription_id):
+    try:
+        subscription = stripe.Subscription.retrieve(subscription_id)
+        return {
+            "success": True,
+            "subscription_id": subscription.id,
+            "status": subscription.status
+        }
+    except stripe.error.StripeError as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Unexpected error: {str(e)}"
+        }
+
+
 def create_customer_with_payment_method(email, payment_method_id):
     try:
         customer = stripe.Customer.create(

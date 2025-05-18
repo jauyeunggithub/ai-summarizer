@@ -54,7 +54,7 @@ services:
       - VIRTUAL_HOST=api.summarizerai.online
       - LETSENCRYPT_HOST=api.summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
-      - AWS_REGION=${AWS_REGION}
+      - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
@@ -91,7 +91,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
       - REDIS_URL=redis://redis:6379/0
-      - AWS_REGION=${AWS_REGION}
+      - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
