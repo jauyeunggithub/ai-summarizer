@@ -10,9 +10,11 @@ services:
     volumes:
       - /etc/nginx/vhost.d
       - /usr/share/nginx/html
-      - ./certs:/etc/nginx/certs:ro
+      - ./certs:/etc/nginx/certs # 🔁 FIXED: was read-only; must be read-write
       - ./nginx/conf.d:/etc/nginx/conf.d
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - webproxy # 🔁 Add to shared network
     restart: always
 
   letsencrypt:
@@ -21,12 +23,16 @@ services:
     environment:
       - NGINX_PROXY_CONTAINER=nginx_proxy
       - NGINX_DOCKER_GEN_CONTAINER=nginx_proxy
+      # Optional for testing:
+      # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
     volumes:
-      - ./certs:/etc/nginx/certs:rw
+      - ./certs:/etc/nginx/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - nginx-proxy
+    networks:
+      - webproxy
     restart: always
 
   frontend:
@@ -36,6 +42,8 @@ services:
       - VIRTUAL_HOST=summarizerai.online
       - LETSENCRYPT_HOST=summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
+    networks:
+      - webproxy
     depends_on:
       - backend
     restart: always
@@ -43,7 +51,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.prod # Use the production Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: flask_api
     volumes:
       - ./backend:/app
@@ -64,6 +72,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - MAX_FILE_SIZE_MB=2
+    networks:
+      - webproxy
     depends_on:
       - db
     restart: always
@@ -84,7 +94,7 @@ services:
   celery_worker:
     build:
       context: ./backend
-      dockerfile: Dockerfile.prod # Use the same production Dockerfile for celery worker
+      dockerfile: Dockerfile.prod
     container_name: celery_worker
     command: celery -A tasks worker --loglevel=info
     volumes:
@@ -105,6 +115,8 @@ services:
       - backend
       - redis
       - db
+    networks:
+      - webproxy
     restart: always
     stdin_open: true
     tty: true
@@ -123,3 +135,6 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  webproxy:
