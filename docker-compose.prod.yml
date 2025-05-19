@@ -53,6 +53,7 @@ services:
       - FLASK_DEBUG=0
       - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/postgres
       - VIRTUAL_HOST=api.summarizerai.online
+      - VIRTUAL_PORT=5000
       - LETSENCRYPT_HOST=api.summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
       - AWS_REGION=us-east-1
