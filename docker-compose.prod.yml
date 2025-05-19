@@ -13,6 +13,7 @@ services:
       - ./certs:/etc/nginx/certs # 🔁 FIXED: was read-only; must be read-write
       - ./nginx/conf.d:/etc/nginx/conf.d
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/acme-challenge:/usr/share/nginx/html/.well-known/acme-challenge # 🔁 Ensure challenge dir is properly mapped
     networks:
       - webproxy # 🔁 Add to shared network
     restart: always
@@ -29,6 +30,7 @@ services:
       - ./certs:/etc/nginx/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/acme-challenge:/usr/share/nginx/html/.well-known/acme-challenge # 🔁 Ensure challenge dir is correctly mapped
     depends_on:
       - nginx-proxy
     networks:
