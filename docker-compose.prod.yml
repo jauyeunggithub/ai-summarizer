@@ -30,7 +30,7 @@ services:
       - ./certs:/etc/nginx/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/acme-challenge:/usr/share/nginx/html/.well-known/acme-challenge # 🔁 Ensure challenge dir is correctly mapped
+      - ./nginx/acme-challenge:/usr/share/nginx/html/.well-known/acme-challenge
     depends_on:
       - nginx-proxy
     networks:
@@ -42,6 +42,7 @@ services:
     container_name: vue_app
     environment:
       - VIRTUAL_HOST=summarizerai.online
+      - VIRTUAL_PORT=80
       - LETSENCRYPT_HOST=summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
     networks:
