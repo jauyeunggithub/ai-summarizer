@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Date
 from sqlalchemy.dialects.postgresql import UUID
-from ..models.base import Base
+from models.base import Base
 
 
 class Summary(Base):

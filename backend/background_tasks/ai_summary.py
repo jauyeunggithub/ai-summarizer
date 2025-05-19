@@ -1,8 +1,8 @@
-from ..tasks import celery
-from ..helpers.ai import summarize_audio, summarize_docx, summarize_pdf, summarize_text
+from tasks import celery
+from helpers.ai import summarize_audio, summarize_docx, summarize_pdf, summarize_text
 import os
 import mimetypes
-from ..repos.summaries import update_summary, get_summary
+from repos.summaries import update_summary, get_summary
 
 
 SUPPORTED_AUDIO_MIME_TYPES = {

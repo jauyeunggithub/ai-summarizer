@@ -1,5 +1,5 @@
-from ..models.summary import Summary
-from ..db import session
+from models.summary import Summary
+from db import session
 
 
 def get_summary(id):

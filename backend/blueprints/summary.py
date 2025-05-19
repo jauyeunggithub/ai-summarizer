@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from ..helpers.auth import jwt_required
-from ..repos.summaries import get_paginated_summary_results
+from helpers.auth import jwt_required
+from repos.summaries import get_paginated_summary_results
 
 
 summary_blueprint = Blueprint('summary', __name__)

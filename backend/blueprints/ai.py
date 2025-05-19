@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
-from ..background_tasks.ai_summary import generate_ai_summary
-from ..helpers.auth import jwt_required
-from ..helpers.storage import upload_file_to_s3
-from ..repos.summaries import create_summary
+from background_tasks.ai_summary import generate_ai_summary
+from helpers.auth import jwt_required
+from helpers.storage import upload_file_to_s3
+from repos.summaries import create_summary
 import os
 import uuid
 import datetime

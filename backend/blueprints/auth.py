@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import jwt
 import datetime
 import os
-from ..repos.users import get_user, create_user
+from repos.users import get_user, create_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 

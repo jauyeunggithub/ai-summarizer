@@ -2,7 +2,7 @@ import jwt
 from functools import wraps
 from flask import request, jsonify
 import os
-from ..repos.users import get_user
+from repos.users import get_user
 
 
 SECRET_KEY = os.getenv('JWT_SECRET_KEY')

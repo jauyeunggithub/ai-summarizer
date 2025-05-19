@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request
-from ..helpers.payment import (
+from helpers.payment import (
     get_active_prices,
     create_subscription,
     cancel_subscription,
     create_customer_with_payment_method
 )
-from ..helpers.auth import jwt_required
+from helpers.auth import jwt_required
 
 
 payment_blueprint = Blueprint('payment', __name__)
