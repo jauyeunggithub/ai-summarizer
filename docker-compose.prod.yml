@@ -41,9 +41,9 @@ services:
     build: ./frontend
     container_name: vue_app
     environment:
-      - VIRTUAL_HOST=summarizerai.online
+      - VIRTUAL_HOST=summarizerai.online,www.summarizerai.online
       - VIRTUAL_PORT=80
-      - LETSENCRYPT_HOST=summarizerai.online
+      - LETSENCRYPT_HOST=summarizerai.online,www.summarizerai.online
       - LETSENCRYPT_EMAIL=your-email@summarizerai.online
     networks:
       - webproxy
