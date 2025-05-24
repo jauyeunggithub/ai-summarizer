@@ -113,7 +113,7 @@ def renew_subscrption(customer_id, price_id):
             }],
         )
     else:
-        new_subscription = stripe.Subscription.create(
+        stripe.Subscription.create(
             customer=customer_id,
             items=[{"price": price_id}],
         )
