@@ -27,10 +27,10 @@
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/about">Log In</router-link>
+            <router-link class="nav-link" to="/login">Log In</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/about">Sign Up</router-link>
+            <router-link class="nav-link" to="/signup">Sign Up</router-link>
           </li>
         </ul>
       </div>
