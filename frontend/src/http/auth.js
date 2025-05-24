@@ -17,3 +17,7 @@ export const signup = ({ username, password, firstName, lastName, paymentMethodI
     priceId,
   })
 }
+
+export const getCurrentUser = () => {
+  return apiClient.get('/auth/current_user')
+}

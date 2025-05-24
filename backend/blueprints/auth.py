@@ -4,6 +4,7 @@ import datetime
 import os
 from repos.users import get_user, create_user
 from helpers.payment import create_customer_with_payment_method, create_subscription
+from helpers.auth import jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -54,4 +55,19 @@ def signup_view():
     create_user(**args)
     create_subscription(customer.id, payment_method_id, price_id)
     response_dict = args.pop('hashed_password')
+    return jsonify(response_dict), 200
+
+
+@auth_blueprint.route('/current_user', methods=['GET'])
+@jwt_required
+def current_user_view():
+    user = request.user
+    response_dict = {
+        'email': user.email,
+        'firstName': user.first_name,
+        'lastName': user.last_name,
+        'subscriptionId': user.subscription_id,
+        'created': user.created,
+        'customerId': user.customer_id,
+    }
     return jsonify(response_dict), 200

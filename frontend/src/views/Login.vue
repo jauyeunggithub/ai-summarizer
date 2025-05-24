@@ -35,6 +35,7 @@
 <script>
 import TopBar from '@/components/TopBar.vue'
 import { login } from '@/http/auth'
+import { useUserStore } from '@/store/user'
 
 export default {
   name: 'Login',
@@ -47,6 +48,7 @@ export default {
         email: '',
         password: '',
       },
+      userStore: useUserStore(),
     }
   },
   methods: {
@@ -56,6 +58,7 @@ export default {
         data: { token },
       } = res
       localStorage.setItem('token', token)
+      await this.userStore.getCurrentUser()
       this.$router.push('/summaries')
     },
   },
