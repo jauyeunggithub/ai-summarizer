@@ -1,7 +1,13 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <router-link class="navbar-brand" to="/">MyApp</router-link>
+      <router-link
+        class="navbar-brand d-flex justify-content-center align-items-center gap-2"
+        to="/"
+      >
+        <i class="bi bi-book-half fs-3 text-success"></i>
+        <div class="fw-bold text-success">Online AI Summarizer</div>
+      </router-link>
 
       <button
         class="navbar-toggler"
