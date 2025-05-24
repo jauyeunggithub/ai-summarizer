@@ -37,6 +37,9 @@ export default {
   computed: {
     price() {
       const [subscriptionPrice] = this.prices
+      if (!subscriptionPrice) {
+        return 0
+      }
       return (subscriptionPrice.unit_amount / 100).toFixed(2)
     },
   },

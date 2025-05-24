@@ -26,17 +26,28 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: { requiresAuth: true },
   },
   {
     path: '/summaries',
     name: 'Summaries',
     component: Summaries,
+    meta: { requiresAuth: true },
   },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+router.beforeEach((to, _, next) => {
+  const isLoggedIn = !!localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
