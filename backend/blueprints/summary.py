@@ -20,6 +20,8 @@ def get_summary_view():
             'textToSummarize': result.text_to_summarize,
             'created': result.created,
             'summaryResult': result.summary_result,
+            'fileName': result.file_name,
+            'description': result.description,
         }
         response_results.append(result_dict)
     return jsonify(response_results), 200

@@ -12,3 +12,5 @@ class Summary(Base):
     text_to_summarize = Column(String(), nullable=True)
     created = Column(Date, nullable=False)
     summary_result = Column(String(), nullable=True)
+    description = Column(String(), nullable=True)
+    file_name = Column(String(), nullable=True)
