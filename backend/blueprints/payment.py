@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 from helpers.payment import (
     get_active_prices,
-    create_subscription,
+    renew_subscrption,
     cancel_subscription,
-    create_customer_with_payment_method
 )
 from helpers.auth import jwt_required
 
@@ -16,14 +15,13 @@ def get_active_prices_view():
     return jsonify(get_active_prices()), 200
 
 
+@payment_blueprint.route('/renew_subscription', methods=['GET'])
 @jwt_required
-def create_subscription_view():
+def renew_subscription_view():
     data = request.get_json()
-    email = data.get('email')
-    payment_method_id = data.get('payment_method_id')
-    price_id = data.get('price_id')
-    customer = create_customer_with_payment_method(email, payment_method_id)
-    create_subscription(customer.id, payment_method_id, price_id)
+    customer_id = data.get('customerId')
+    price_id = data.get('priceId')
+    renew_subscrption(customer_id, price_id)
     return jsonify(), 200
 
 

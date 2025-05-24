@@ -57,7 +57,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: flask_api
     volumes:
-      - ./backend:/app
+      - ./backend:/flask_app
       - ./secrets:/run/secrets:ro
     environment:
       - FLASK_ENV=production

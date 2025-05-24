@@ -98,6 +98,27 @@ def create_subscription(customer_id, payment_method_id, price_id):
         return {"error": str(e)}
 
 
+def renew_subscrption(customer_id, price_id):
+    subscriptions = stripe.Subscription.list(
+        customer=customer_id, status='canceled')
+
+    if subscriptions.data:
+        subscription_id = subscriptions.data[0].id
+        stripe.Subscription.modify(
+            subscription_id,
+            cancel_at_period_end=False,
+            items=[{
+                "id": subscriptions.data[0].items.data[0].id,
+                "price": subscriptions.data[0].items.data[0].price.id,
+            }],
+        )
+    else:
+        new_subscription = stripe.Subscription.create(
+            customer=customer_id,
+            items=[{"price": price_id}],
+        )
+
+
 def cancel_subscription(subscription_id):
     try:
         subscription = stripe.Subscription.delete(subscription_id)

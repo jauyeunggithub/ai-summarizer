@@ -3,6 +3,7 @@ import jwt
 import datetime
 import os
 from repos.users import get_user, create_user
+from helpers.payment import create_customer_with_payment_method, create_subscription
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -35,8 +36,10 @@ def signup_view():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    payment_method_id = data.get('paymentMethodId')
+    price_id = data.get('priceId')
     hashed_password = generate_password_hash(password)
     subscription_id = None
     args = {
@@ -47,5 +50,7 @@ def signup_view():
         'hashed_password': hashed_password
     }
     create_user(**args)
+    customer = create_customer_with_payment_method(email, payment_method_id)
+    create_subscription(customer.id, payment_method_id, price_id)
     response_dict = args.pop('hashed_password')
     return jsonify(response_dict), 200
