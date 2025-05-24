@@ -43,6 +43,7 @@
 <script>
 import TopBar from '@/components/TopBar.vue'
 import { loadStripe } from '@stripe/stripe-js'
+import { signup } from '@/http/auth'
 
 export default {
   name: 'Signup',
@@ -55,6 +56,13 @@ export default {
       errorMessage: null,
       stripe: null,
       card: null,
+      user: {
+        email: '',
+        password: '',
+        confirmPassword: '',
+        firstName: '',
+        lastName: '',
+      },
     }
   },
   async mounted() {
@@ -77,9 +85,14 @@ export default {
         this.errorMessage = error.message
         this.processing = false
       } else {
-        alert('PaymentMethod created: ' + paymentMethod.id)
         this.processing = false
       }
+      const args = {
+        ...this.user,
+        paymentMethodId: paymentMethod.id,
+        priceId: null,
+      }
+      await signup(args)
     },
   },
 }

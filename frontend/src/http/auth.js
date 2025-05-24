@@ -7,11 +7,13 @@ export const login = ({ username, password }) => {
   })
 }
 
-export const signup = ({ username, password, firstName, lastName }) => {
+export const signup = ({ username, password, firstName, lastName, paymentMethodId, priceId }) => {
   return apiClient.post('/auth/signup', {
     username,
     password,
     firstName,
     lastName,
+    paymentMethodId,
+    priceId,
   })
 }
