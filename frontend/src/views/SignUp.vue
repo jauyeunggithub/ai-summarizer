@@ -1,7 +1,7 @@
 <template>
   <TopBar />
 
-  <section class="mx-auto py-3" style="max-width: 800px">
+  <section class="mx-auto py-3 custom-box">
     <form>
       <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
