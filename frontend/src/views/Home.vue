@@ -12,11 +12,20 @@
 
 <script>
 import TopBar from '@/components/TopBar.vue'
+import { getActivePrices } from '@/http/payment'
 
 export default {
   name: 'HomePage',
   components: {
     TopBar,
   },
+  data() {
+    return { prices: [] }
+  },
+  async beforeMount() {
+    this.prices = await getActivePrices()
+    console.log(this.prices)
+  },
+  methods: {},
 }
 </script>

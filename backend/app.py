@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from blueprints.auth import auth_blueprint
 from blueprints.ai import ai_blueprint
 from blueprints.payment import payment_blueprint
@@ -7,6 +8,7 @@ from blueprints.status import status_blueprint
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(ai_blueprint, url_prefix='/ai')

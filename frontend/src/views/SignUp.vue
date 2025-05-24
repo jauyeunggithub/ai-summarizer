@@ -44,6 +44,7 @@
 import TopBar from '@/components/TopBar.vue'
 import { loadStripe } from '@stripe/stripe-js'
 import { signup } from '@/http/auth'
+import { getActivePrices } from '@/http/payment'
 
 export default {
   name: 'Signup',
@@ -92,6 +93,7 @@ export default {
         paymentMethodId: paymentMethod.id,
         priceId: null,
       }
+      const { data } = await getActivePrices()
       await signup(args)
     },
   },
