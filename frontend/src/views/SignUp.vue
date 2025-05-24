@@ -2,15 +2,29 @@
   <TopBar />
 
   <section class="mx-auto py-3 custom-box">
+    <h1 class="fs-3">Sign Up</h1>
+
     <form>
       <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter email" />
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="Email Address"
+          v-model="user.email"
+        />
       </div>
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Password" />
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Password"
+          v-model="user.password"
+        />
       </div>
 
       <div class="mb-3">
@@ -20,17 +34,30 @@
           class="form-control"
           id="confirmPassword"
           placeholder="Confirm Password"
+          v-model="user.confirmPassword"
         />
       </div>
 
       <div class="mb-3">
         <label for="firstName" class="form-label">First Name</label>
-        <input type="text" class="form-control" id="firstName" placeholder="First Name" />
+        <input
+          type="text"
+          class="form-control"
+          id="firstName"
+          placeholder="First Name"
+          v-model="user.firstName"
+        />
       </div>
 
       <div class="mb-3">
         <label for="lastName" class="form-label">Last Name</label>
-        <input type="password" class="form-control" id="lastName" placeholder="Last Name" />
+        <input
+          type="password"
+          class="form-control"
+          id="lastName"
+          placeholder="Last Name"
+          v-model="user.lastName"
+        />
       </div>
 
       <div id="card-element" class="mb-3"></div>

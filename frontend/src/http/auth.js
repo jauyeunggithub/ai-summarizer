@@ -1,8 +1,8 @@
 import apiClient from '@/plugins/axios'
 
-export const login = ({ username, password }) => {
+export const login = ({ email, password }) => {
   return apiClient.post('/auth/login', {
-    username,
+    email,
     password,
   })
 }
