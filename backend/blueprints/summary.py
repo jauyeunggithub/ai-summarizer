@@ -6,7 +6,7 @@ from repos.summaries import get_paginated_summary_results
 summary_blueprint = Blueprint('summary', __name__)
 
 
-@summary_blueprint.route('/all', methods=['GET', 'OPTIONS'])
+@summary_blueprint.route('/all', methods=['GET'])
 @jwt_required
 def get_summary_view():
     page = int(request.args.get('page', 1))
