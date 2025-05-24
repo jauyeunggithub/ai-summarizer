@@ -4,6 +4,7 @@ from blueprints.auth import auth_blueprint
 from blueprints.ai import ai_blueprint
 from blueprints.payment import payment_blueprint
 from blueprints.status import status_blueprint
+from blueprints.summary import summary_blueprint
 
 
 def create_app():
@@ -14,5 +15,6 @@ def create_app():
     app.register_blueprint(ai_blueprint, url_prefix='/ai')
     app.register_blueprint(payment_blueprint, url_prefix='/payment')
     app.register_blueprint(status_blueprint, url_prefix='/status')
+    app.register_blueprint(summary_blueprint, url_prefix='/summary')
 
     return app

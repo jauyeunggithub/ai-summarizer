@@ -3,6 +3,7 @@ from functools import wraps
 from flask import request, jsonify
 import os
 from repos.users import get_user
+from flask_cors import cross_origin
 
 
 SECRET_KEY = os.getenv('JWT_SECRET_KEY')
@@ -10,9 +11,12 @@ SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 def jwt_required(f):
     @wraps(f)
+    @cross_origin()
     def decorated_function(*args, **kwargs):
-        auth_header = request.headers.get('Authorization', None)
+        if request.method == 'OPTIONS':
+            return '', 200
 
+        auth_header = request.headers.get('Authorization', None)
         if not auth_header:
             return jsonify({"error": "Authorization header missing"}), 401
 

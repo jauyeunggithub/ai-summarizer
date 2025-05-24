@@ -9,21 +9,16 @@
     <table class="table">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Email</th>
+          <th>Text to Summarize</th>
+          <th>File to Summarize</th>
+          <th>Result</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th>1</th>
-          <td>Alice</td>
-          <td>alice@example.com</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>Bob</td>
-          <td>bob@example.com</td>
+        <tr v-for="s of summaries" :key="s.id">
+          <td>{{ s.textToSummarize }}</td>
+          <td>{{ s.filePath }}</td>
+          <td>{{ s.summaryResult }}</td>
         </tr>
       </tbody>
     </table>
@@ -33,6 +28,7 @@
 <script>
 import LoggedInTopBar from '@/components/LoggedInTopBar.vue'
 import { useUserStore } from '@/store/user'
+import { getSummaries as getSummariesHttp } from '@/http/summary'
 
 export default {
   name: 'Summaries',
@@ -43,7 +39,12 @@ export default {
     return {
       userStore: useUserStore(),
       search: '',
+      summaries: [],
     }
+  },
+  async beforeMount() {
+    const { data } = await getSummariesHttp()
+    this.summaries = data
   },
 }
 </script>
