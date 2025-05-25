@@ -6,12 +6,14 @@ from repos.summaries import create_summary
 import os
 import uuid
 import datetime
+from constants.summary import StatusEnum
 
 
 ai_blueprint = Blueprint('ai', __name__)
 
 
 MAX_FILE_SIZE_MB = int(os.getenv('MAX_FILE_SIZE_MB'))
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
 
@@ -38,8 +40,7 @@ def generate_summary_view():
     temp_path = os.path.join("/tmp", file.filename)
     file.save(temp_path)
 
-    bucket_name = "your-bucket-name"
-    result = upload_file_to_s3(temp_path, bucket_name)
+    result = upload_file_to_s3(temp_path, S3_BUCKET_NAME)
 
     text_to_summarize = request.form.get('textToSummarize')
     summary_id = uuid.uuid4()
@@ -55,6 +56,7 @@ def generate_summary_view():
         'summary_id': summary_id,
         'temp_path': temp_path,
         'text_to_summarize': text_to_summarize,
+        'status': StatusEnum.PROCESSING.value,
     }
     generate_ai_summary(**args)
     return jsonify(result), (200 if result["success"] else 500)

@@ -14,3 +14,4 @@ class Summary(Base):
     summary_result = Column(String(), nullable=True)
     description = Column(String(), nullable=True)
     file_name = Column(String(), nullable=True)
+    status = Column(String(), nullable=True)

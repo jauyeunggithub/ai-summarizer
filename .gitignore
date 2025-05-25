@@ -11,3 +11,4 @@
 /backend/background_tasks/__pycache__/*.pyc
 /.env
 /.env.prod
+/backend/constants/__pycache__/*.pyc

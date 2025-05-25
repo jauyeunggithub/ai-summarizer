@@ -3,6 +3,7 @@ from helpers.ai import summarize_audio, summarize_docx, summarize_pdf, summarize
 import os
 import mimetypes
 from repos.summaries import update_summary, get_summary
+from constants.summary import StatusEnum
 
 
 SUPPORTED_AUDIO_MIME_TYPES = {
@@ -33,6 +34,7 @@ def generate_ai_summary(summary_id, temp_path, text_to_summarize=None):
     args = {
         'summary_id': summary_id,
         'summary_result': summary_result,
+        'status': StatusEnum.COMPLETE.value,
     }
     summary = get_summary()
     update_summary(**summary, **args)

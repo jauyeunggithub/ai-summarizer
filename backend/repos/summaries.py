@@ -30,6 +30,7 @@ def update_summary(**args):
     summary.file_path = args['file_path']
     summary.text_to_summarize = args['text_to_summarize']
     summary.summary_result = args['summary_result']
+    summary.status = args['status']
     session.commit()
 
 
