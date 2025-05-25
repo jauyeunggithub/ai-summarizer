@@ -3,6 +3,9 @@ from helpers.payment import (
     get_active_prices,
     renew_subscrption,
     cancel_subscription,
+    create_setup_intent,
+    attach_payment_method,
+    get_payment_details,
 )
 from helpers.auth import jwt_required
 
@@ -30,3 +33,40 @@ def renew_subscription_view():
 def cancel_subscription_view():
     cancel_subscription(request.user.subscription_id)
     return jsonify(), 200
+
+
+@payment_blueprint.route('/create_setup_intent', methods=['POST'])
+@jwt_required
+def create_setup_intent_view():
+    customer_id = request.user.customer_id
+    try:
+        setup_intent = create_setup_intent(customer_id)
+        return jsonify({'clientSecret': setup_intent.client_secret})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@payment_blueprint.route('/attach_payment_method', methods=['POST'])
+@jwt_required
+def attach_payment_method_view():
+    data = request.get_json()
+    customer_id = request.user.customer_id
+    payment_method_id = data.get('paymentMethodId')
+    try:
+        attach_payment_method(payment_method_id, customer_id)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@payment_blueprint.route('/get_payment_details', methods=['GET'])
+@jwt_required
+def get_payment_details():
+    customer_id = request.user.customer_id
+    card = get_payment_details(customer_id)
+    return jsonify({
+        'brand': card.brand,
+        'last4': card.last4,
+        'expMonth': card.exp_month,
+        'expYear': card.exp_year,
+    })

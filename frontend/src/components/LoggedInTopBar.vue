@@ -24,7 +24,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link class="nav-link" to="/">Profile</router-link>
+            <router-link class="nav-link" to="/profile">Profile</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/summaries">Summaries</router-link>

@@ -57,7 +57,7 @@
       <div class="mb-3">
         <label for="lastName" class="form-label">Last Name</label>
         <input
-          type="password"
+          type="text"
           class="form-control"
           id="lastName"
           placeholder="Last Name"
@@ -66,7 +66,7 @@
         />
       </div>
 
-      <div id="card-element" class="mb-3"></div>
+      <div id="card-element" ref="cardElement" class="mb-3"></div>
 
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
@@ -103,7 +103,7 @@ export default {
     this.stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
     const elements = this.stripe.elements()
     this.card = elements.create('card')
-    this.card.mount('#card-element')
+    this.card.mount(this.$refs.cardElement)
   },
   methods: {
     async handleSubmit() {

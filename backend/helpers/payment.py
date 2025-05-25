@@ -125,3 +125,33 @@ def cancel_subscription(subscription_id):
         return subscription
     except stripe.error.StripeError as e:
         return {"error": str(e)}
+
+
+def create_setup_intent(customer_id):
+    setup_intent = stripe.SetupIntent.create(
+        customer=customer_id,
+    )
+    return setup_intent
+
+
+def attach_payment_method(payment_method_id, customer_id):
+    stripe.PaymentMethod.attach(
+        payment_method_id,
+        customer=customer_id,
+    )
+
+    stripe.Customer.modify(
+        customer_id,
+        invoice_settings={
+            'default_payment_method': payment_method_id,
+        }
+    )
+
+
+def get_payment_details(customer_id):
+    customer = stripe.Customer.retrieve(customer_id)
+    default_pm_id = customer.get(
+        "invoice_settings", {}).get("default_payment_method")
+    pm = stripe.PaymentMethod.retrieve(default_pm_id)
+    card = pm.card
+    return card
