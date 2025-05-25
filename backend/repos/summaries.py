@@ -1,6 +1,6 @@
 from models.summary import Summary
 from db import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 
 def get_summary(id):
@@ -18,6 +18,12 @@ def get_paginated_summary_results(page=1, per_page=10, conditions=[]):
 def count_summary_results(conditions=[]):
     session = Session()
     query = session.query(Summary).filter(or_(*conditions))
+    return query.count()
+
+
+def count_summary_results_and(conditions=[]):
+    session = Session()
+    query = session.query(Summary).filter(and_(*conditions))
     return query.count()
 
 

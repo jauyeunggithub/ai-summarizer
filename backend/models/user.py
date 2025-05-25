@@ -15,3 +15,5 @@ class User(Base):
     hashed_password = Column(String(500), unique=True, nullable=False)
     customer_id = Column(String(), unique=True, nullable=False)
     subscription_id = Column(String(), unique=True, nullable=False)
+    status = Column(String(), unique=True, nullable=False)
+    password_reset_token = Column(String(), unique=True, nullable=False)

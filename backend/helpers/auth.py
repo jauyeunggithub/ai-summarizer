@@ -7,7 +7,7 @@ from flask_cors import cross_origin
 from itsdangerous import URLSafeTimedSerializer
 
 
-SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
 SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT')
 
@@ -30,7 +30,7 @@ def jwt_required(f):
             if token_type.lower() != 'bearer':
                 raise ValueError("Invalid token type")
 
-            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
             request.user = get_user(payload['sub'])
 
         except (ValueError, jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:

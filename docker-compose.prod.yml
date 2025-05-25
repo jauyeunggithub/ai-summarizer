@@ -77,6 +77,7 @@ services:
       - MAX_FILE_SIZE_MB=2
       - SECRET_KEY=${SECRET_KEY}
       - SECURITY_PASSWORD_SALT=${SECURITY_PASSWORD_SALT}
+      - MAX_SUMMARIES_PER_MONTH=50
     networks:
       - webproxy
     depends_on:

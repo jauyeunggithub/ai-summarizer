@@ -10,7 +10,7 @@ import uuid
 
 
 auth_blueprint = Blueprint('auth', __name__)
-SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 
 @auth_blueprint.route('/login', methods=['POST'])
@@ -27,7 +27,7 @@ def login_view():
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
         }
 
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
         return jsonify({'token': token}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
