@@ -13,7 +13,17 @@
             :files="files"
             :allow-multiple="true"
             :max-files="3"
-            acceptedFileTypes="image/*"
+            :accepted-file-types="[
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+              'application/pdf',
+              'audio/mpeg',
+              'audio/mp4',
+              'audio/x-m4a',
+              'audio/wav',
+              'audio/x-wav',
+              'audio/webm',
+              'audio/mpeg',
+            ]"
             labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
             @updatefiles="handleUpdateFiles"
           />
