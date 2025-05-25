@@ -5,7 +5,6 @@ import mimetypes
 from repos.summaries import update_summary, get_summary
 from constants.summary import StatusEnum
 import traceback
-from helpers.db import model_to_dict
 
 
 SUPPORTED_AUDIO_MIME_TYPES = {
