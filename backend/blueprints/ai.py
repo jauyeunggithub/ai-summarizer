@@ -7,6 +7,7 @@ import os
 import uuid
 import datetime
 from constants.summary import StatusEnum
+from werkzeug.utils import secure_filename
 
 
 ai_blueprint = Blueprint('ai', __name__)
@@ -37,7 +38,8 @@ def generate_summary_view():
             "error": f"File size exceeds limit of {MAX_FILE_SIZE_MB} MB"
         }), 400
 
-    temp_path = os.path.join("/tmp", file.filename)
+    filename = secure_filename(file.filename)
+    temp_path = os.path.join("/tmp", filename)
     file.save(temp_path)
 
     result = upload_file_to_s3(temp_path, S3_BUCKET_NAME)

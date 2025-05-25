@@ -23,6 +23,7 @@ SUPPORTED_AUDIO_MIME_TYPES = {
 @celery.task
 def generate_ai_summary(summary_id, temp_path, text_to_summarize=None):
     try:
+        breakpoint()
         mime_type, encoding = mimetypes.guess_type(temp_path)
         if mime_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
             summary_result = summarize_docx(temp_path)
