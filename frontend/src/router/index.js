@@ -5,6 +5,7 @@ import Login from '@/views/Login.vue'
 import SignUp from '@/views/SignUp.vue'
 import Profile from '@/views/Profile.vue'
 import Summaries from '@/views/Summaries.vue'
+import PasswordReset from '@/views/PasswordReset.vue'
 
 const routes = [
   {
@@ -21,6 +22,11 @@ const routes = [
     path: '/signup',
     name: 'SignUp',
     component: SignUp,
+  },
+  {
+    path: '/passwordReset',
+    name: 'PasswordReset',
+    component: PasswordReset,
   },
   {
     path: '/profile',

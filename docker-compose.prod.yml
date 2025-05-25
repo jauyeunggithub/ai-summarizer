@@ -75,6 +75,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - MAX_FILE_SIZE_MB=2
+      - SECRET_KEY=${SECRET_KEY}
+      - SECURITY_PASSWORD_SALT=${SECURITY_PASSWORD_SALT}
     networks:
       - webproxy
     depends_on:

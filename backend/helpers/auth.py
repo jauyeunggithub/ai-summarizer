@@ -4,9 +4,14 @@ from flask import request, jsonify
 import os
 from repos.users import get_user
 from flask_cors import cross_origin
+from itsdangerous import URLSafeTimedSerializer
 
 
 SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
+SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT')
+
+serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 
 def jwt_required(f):
@@ -33,3 +38,16 @@ def jwt_required(f):
 
         return f(*args, **kwargs)
     return decorated_function
+
+
+def generate_reset_token(email):
+    return serializer.dumps(email, salt=SECURITY_PASSWORD_SALT)
+
+
+def verify_reset_token(token, expiration=3600):
+    try:
+        email = serializer.loads(
+            token, salt=SECURITY_PASSWORD_SALT, max_age=expiration)
+        return email
+    except Exception:
+        return None
