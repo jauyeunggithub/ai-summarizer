@@ -8,8 +8,15 @@
       <button type="button" class="btn btn-primary">Summarize New File</button>
     </section>
 
-    <section class="my-2">
+    <section class="my-2 d-flex align-items-center">
       <input type="search" class="form-control" id="search" placeholder="Search" v-model="search" />
+
+      <select class="form-select w-25" v-model="resultsPerPage" @change="getResults()">
+        <option selected disabled>Results per page</option>
+        <option :value="10">10</option>
+        <option :value="50">50</option>
+        <option :value="100">100</option>
+      </select>
     </section>
 
     <table class="table">
@@ -34,8 +41,15 @@
     <section class="my-2 d-flex justify-content-center align-items-center">
       <nav>
         <ul class="pagination">
-          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          <li class="page-item" :aria-disabled="page === 1 ? 'true' : 'false'">
+            <a class="page-link" href="#" @click="getPrevPageResults()"> Previous </a>
+          </li>
+          <li
+            class="page-item"
+            :aria-disabled="page * resultsPerPage >= totalCount ? 'true' : 'false'"
+          >
+            <a class="page-link" href="#" @click="getNextPageResults()"> Next </a>
+          </li>
         </ul>
       </nav>
     </section>
@@ -63,14 +77,16 @@ export default {
       userStore: useUserStore(),
       search: '',
       summaries: [],
+      totalCount: 0,
       showViewFileDialogInstance: undefined,
       summary: {},
       url: '',
+      page: 1,
+      resultsPerPage: 10,
     }
   },
   async beforeMount() {
-    const { data } = await getSummariesHttp()
-    this.summaries = data
+    await this.getResults()
   },
   mounted() {
     const modalEl = this.$refs.viewFileModal.$el
@@ -89,6 +105,23 @@ export default {
       this.summary = summary
       await this.$nextTick()
       this.showViewFileDialogInstance.show()
+    },
+    async getNextPageResults() {
+      this.page++
+      await this.getResults()
+    },
+    async getPrevPageResults() {
+      this.page--
+      await this.getResults()
+    },
+    async getResults() {
+      const { page, resultsPerPage, search } = this
+      const args = { page, perPage: resultsPerPage, keyword: search }
+      const {
+        data: { results, totalCount },
+      } = await getSummariesHttp(args)
+      this.summaries = results
+      this.totalCount = totalCount
     },
   },
 }

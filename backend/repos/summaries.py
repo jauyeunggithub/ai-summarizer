@@ -1,15 +1,21 @@
 from models.summary import Summary
 from db import session
+from sqlalchemy import or_
 
 
 def get_summary(id):
     return session.query(Summary).filter(Summary.id == id).first()
 
 
-def get_paginated_summary_results(page=1, per_page=10):
-    query = session.query(Summary)
+def get_paginated_summary_results(page=1, per_page=10, conditions=[]):
+    query = session.query(Summary).filter(or_(*conditions))
     results = query.offset((page - 1) * per_page).limit(per_page).all()
     return results
+
+
+def count_summary_results(conditions=[]):
+    query = session.query(Summary).filter(or_(*conditions))
+    return query.count()
 
 
 def create_summary(**args):
