@@ -5,7 +5,9 @@
     <h1 class="fs-3">Welcome, {{ userStore.currentUser.firstName }}. Here are your summaries:</h1>
 
     <section class="my-2">
-      <button type="button" class="btn btn-primary">Summarize New File</button>
+      <button type="button" class="btn btn-primary" @click="openSummarizeFileDialog()">
+        Summarize New File
+      </button>
     </section>
 
     <section class="my-2 d-flex align-items-center">
@@ -56,11 +58,14 @@
   </section>
 
   <ViewFileDialog ref="viewFileModal" :url="url" />
+
+  <SummarizeDialog ref="summarizeModal" />
 </template>
 
 <script>
 import LoggedInTopBar from '@/components/LoggedInTopBar.vue'
 import ViewFileDialog from '@/components/ViewFileDialog.vue'
+import SummarizeDialog from '@/components/SummarizeDialog.vue'
 import { useUserStore } from '@/store/user'
 import { getSummaries as getSummariesHttp } from '@/http/summary'
 import { Modal } from 'bootstrap'
@@ -71,6 +76,7 @@ export default {
   components: {
     LoggedInTopBar,
     ViewFileDialog,
+    SummarizeDialog,
   },
   data() {
     return {
@@ -79,6 +85,7 @@ export default {
       summaries: [],
       totalCount: 0,
       showViewFileDialogInstance: undefined,
+      showSummarizeDialogInstance: undefined,
       summary: {},
       url: '',
       page: 1,
@@ -89,18 +96,25 @@ export default {
     await this.getResults()
   },
   mounted() {
-    const modalEl = this.$refs.viewFileModal.$el
-    this.showViewFileDialogInstance = new Modal(modalEl)
-    modalEl.addEventListener('shown.bs.modal', async () => {
+    this.showViewFileDialogInstance = new Modal(this.$refs.viewFileModal.$el)
+    this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
+    this.$refs.viewFileModal.$el.addEventListener('shown.bs.modal', this.onViewFileModalShown)
+  },
+  beforeUnmount() {
+    this.$refs.viewFileModal.$el.removeEventListener('shown.bs.modal', this.onViewFileModalShown)
+  },
+  methods: {
+    openSummarizeFileDialog() {
+      this.showSummarizeDialogInstance.show()
+    },
+    async onViewFileModalShown() {
       const res = await fetchFile({ url: this.summary.filePath })
       const reader = new FileReader()
       reader.onloadend = () => {
         this.url = reader.result
       }
       reader.readAsDataURL(res.data)
-    })
-  },
-  methods: {
+    },
     async showFile(summary) {
       this.summary = summary
       await this.$nextTick()
