@@ -33,7 +33,9 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" @click="summarizeFile">
+            Summarize Document
+          </button>
         </div>
       </div>
     </div>
@@ -53,13 +55,25 @@ const FilePond = vueFilePond(FilePondPluginImagePreview, FilePondPluginFileValid
 export default {
   name: 'SummarizeDialog',
   components: { FilePond },
+  emits: ['close'],
+  data() {
+    return {
+      fileItems: [],
+    }
+  },
   methods: {
-    async handleUpdateFiles(fileItems) {
-      for (const fileItem of fileItems) {
+    handleUpdateFiles(fileItems) {
+      this.fileItems = fileItems
+    },
+    async summarizeFile() {
+      for (const fileItem of this.fileItems) {
         const formData = new FormData()
         formData.append('file', fileItem.file)
         await generateSummary(formData)
       }
+      this.$refs.pond.removeFiles()
+      this.fileItems = []
+      this.$emit('close')
     },
   },
 }

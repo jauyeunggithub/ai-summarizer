@@ -63,7 +63,7 @@
 
   <ViewFileDialog ref="viewFileModal" :url="url" />
 
-  <SummarizeDialog ref="summarizeModal" />
+  <SummarizeDialog ref="summarizeModal" @close="closeSummarizeDialog" />
 </template>
 
 <script>
@@ -140,6 +140,10 @@ export default {
       } = await getSummariesHttp(args)
       this.summaries = results
       this.totalCount = totalCount
+    },
+    async closeSummarizeDialog() {
+      this.showSummarizeDialogInstance.hide()
+      await this.getResults()
     },
   },
 }
