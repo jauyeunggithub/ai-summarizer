@@ -33,7 +33,7 @@
       <div class="mb-3">
         <label for="confirmPassword" class="form-label">Confirm Password</label>
         <input
-          type="confirmPassword"
+          type="password"
           class="form-control"
           id="confirmPassword"
           placeholder="Confirm Password"
@@ -133,12 +133,13 @@ export default {
       } else {
         this.processing = false
       }
+      const { data } = await getActivePrices()
+      const [subscriptionPrice] = data
       const args = {
         ...this.user,
         paymentMethodId: paymentMethod.id,
-        priceId: null,
+        priceId: subscriptionPrice.priceId,
       }
-      const { data } = await getActivePrices()
       await signup(args)
     },
   },

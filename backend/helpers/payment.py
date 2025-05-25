@@ -17,11 +17,11 @@ def get_active_prices(limit=10):
         price_list = []
         for price in prices.auto_paging_iter():
             price_info = {
-                "price_id": price.id,
-                "product_name": price.product.name if hasattr(price.product, "name") else "Unnamed",
-                "unit_amount": price.unit_amount,
+                "priceId": price.id,
+                "productName": price.product.name if hasattr(price.product, "name") else "Unnamed",
+                "unitAmount": price.unit_amount,
                 "currency": price.currency,
-                "recurring_interval": price.recurring.interval if price.recurring else "one_time"
+                "recurringInterval": price.recurring.interval if price.recurring else "one_time"
             }
             price_list.append(price_info)
 
@@ -36,7 +36,7 @@ def get_subscription_status(subscription_id):
         subscription = stripe.Subscription.retrieve(subscription_id)
         return {
             "success": True,
-            "subscription_id": subscription.id,
+            "subscriptionId": subscription.id,
             "status": subscription.status
         }
     except stripe.error.StripeError as e:

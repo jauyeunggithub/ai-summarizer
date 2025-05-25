@@ -33,7 +33,7 @@
       <div class="mb-3">
         <label for="confirmPassword" class="form-label">Confirm Password</label>
         <input
-          type="confirmPassword"
+          type="password"
           class="form-control"
           id="confirmPassword"
           placeholder="Confirm Password"
@@ -88,6 +88,7 @@ import {
   createSetupIntent,
   attachPaymentMethods,
   cancelSubscription as cancelSubscriptionHttp,
+  getPaymentDetails as getPaymentDetailsHttp,
 } from '@/http/payment'
 
 export default {
@@ -101,6 +102,7 @@ export default {
       user: {},
       card: undefined,
       error: undefined,
+      paymentDetails: {},
     }
   },
   watch: {
@@ -113,6 +115,7 @@ export default {
   },
   beforeMount() {
     this.userStore.getCurrentUser()
+    this.getPaymentDetails()
   },
   async mounted() {
     this.stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
@@ -142,6 +145,10 @@ export default {
     },
     cancelSubscription() {
       cancelSubscriptionHttp()
+    },
+    async getPaymentDetails() {
+      const { data } = await getPaymentDetailsHttp()
+      this.paymentDetails = data
     },
   },
 }

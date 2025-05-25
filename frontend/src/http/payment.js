@@ -19,3 +19,7 @@ export const cancelSubscription = async () => {
     paymentMethodId,
   })
 }
+
+export const getPaymentDetails = async () => {
+  return apiClient.get('/payment/get_payment_details')
+}

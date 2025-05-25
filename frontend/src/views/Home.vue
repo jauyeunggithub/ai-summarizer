@@ -5,7 +5,7 @@
     <div class="container d-flex flex-column justify-content-center align-items-center">
       <h1 class="display-5 fw-bold">Never Read Boring Text Again</h1>
       <p class="fs-2">Sign Up for Online AI Summarizer to get summaries of documents.</p>
-      <button class="btn btn-primary btn-lg fs-2" type="button">Sign Up Now</button>
+      <button class="btn btn-primary btn-lg fs-2" type="button" @click="signUp">Sign Up Now</button>
     </div>
   </div>
 
@@ -40,13 +40,17 @@ export default {
       if (!subscriptionPrice) {
         return 0
       }
-      return (subscriptionPrice.unit_amount / 100).toFixed(2)
+      return (subscriptionPrice.unitAmount / 100).toFixed(2)
     },
   },
   async beforeMount() {
     const { data } = await getActivePrices()
     this.prices = data
   },
-  methods: {},
+  methods: {
+    signUp() {
+      this.$router.push('/signup')
+    },
+  },
 }
 </script>

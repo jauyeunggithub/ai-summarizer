@@ -6,6 +6,7 @@ from repos.users import get_user, create_user
 from helpers.payment import create_customer_with_payment_method, create_subscription
 from helpers.auth import jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
+import uuid
 
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -45,6 +46,7 @@ def signup_view():
     subscription_id = None
     customer = create_customer_with_payment_method(email, payment_method_id)
     args = {
+        'id': str(uuid.uuid4()),
         'email': email,
         'first_name': first_name,
         'last_name': last_name,
