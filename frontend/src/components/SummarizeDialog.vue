@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Summarize New File</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" @click="close"></button>
         </div>
 
         <div class="modal-body m-0 p-0">
@@ -12,23 +12,14 @@
             ref="pond"
             :files="files"
             :allow-multiple="false"
-            :accepted-file-types="[
-              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-              'application/pdf',
-              'audio/mpeg',
-              'audio/mp4',
-              'audio/x-m4a',
-              'audio/wav',
-              'audio/x-wav',
-              'audio/webm',
-              'audio/mpeg',
-            ]"
+            :accepted-file-types="acceptedFileTypes"
             max-file-size="2MB"
             max-total-file-size="2MB"
             labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
             @updatefiles="handleUpdateFiles"
             label-max-file-size-exceeded="File too large"
             label-max-file-size="Max file size: {filesize}"
+            label-file-type-not-allowed="File type not allowed"
           />
         </div>
 
@@ -48,9 +39,14 @@ import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import { generateSummary } from '@/http/ai'
 
-const FilePond = vueFilePond(FilePondPluginImagePreview, FilePondPluginFileValidateSize)
+const FilePond = vueFilePond(
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateSize,
+  FilePondPluginFileValidateType
+)
 
 export default {
   name: 'SummarizeDialog',
@@ -59,6 +55,14 @@ export default {
   data() {
     return {
       fileItems: [],
+      acceptedFileTypes: [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/pdf',
+        'audio/mpeg',
+        'audio/x-m4a',
+        'audio/wav',
+        'audio/webm',
+      ],
     }
   },
   methods: {
@@ -75,6 +79,17 @@ export default {
       this.fileItems = []
       this.$emit('close')
     },
+    close() {
+      this.$refs.pond.removeFiles()
+      this.fileItems = []
+      this.$emit('close')
+    },
   },
 }
 </script>
+
+<style scoped>
+::v-deep .filepond--file-status-sub {
+  display: none !important;
+}
+</style>
