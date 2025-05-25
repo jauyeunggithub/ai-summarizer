@@ -53,6 +53,7 @@ def signup_view():
         'subscription_id': subscription_id,
         'hashed_password': hashed_password,
         'customer_id': customer.id,
+        'created': datetime.datetime.now(datetime.timezone.utc),
     }
     create_user(**args)
     create_subscription(customer.id, payment_method_id, price_id)

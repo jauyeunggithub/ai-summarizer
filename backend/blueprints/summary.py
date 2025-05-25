@@ -13,7 +13,9 @@ def get_summary_view():
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('perPage', 10))
     keyword = request.args.get('keyword')
-    conditions = []
+    conditions = [
+        Summary.user_id == request.user.id
+    ]
     if keyword:
         conditions = [
             Summary.file_name.ilike(f"%{keyword}%"),

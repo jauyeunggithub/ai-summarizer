@@ -4,6 +4,11 @@
   <section class="mx-auto py-3 custom-box">
     <h1 class="fs-3">Sign Up</h1>
 
+    <div class="alert alert-success d-flex align-items-center gap-1" v-if="signUpSuccessful">
+      <section>Sign up is successful.</section>
+      <router-link class="nav-link text-decoration-underline" to="/login">Log in here</router-link>
+    </div>
+
     <form ref="form" @submit.prevent="handleSubmit">
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
@@ -97,6 +102,7 @@ export default {
         firstName: '',
         lastName: '',
       },
+      signUpSuccessful: false,
     }
   },
   async mounted() {
@@ -141,6 +147,7 @@ export default {
         priceId: subscriptionPrice.priceId,
       }
       await signup(args)
+      this.signUpSuccessful = true
     },
   },
 }
