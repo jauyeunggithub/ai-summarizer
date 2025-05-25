@@ -7,7 +7,17 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <div class="modal-body m-0 p-0" :style="{ height: '70vh' }"></div>
+        <div class="modal-body m-0 p-0">
+          <FilePond
+            ref="pond"
+            :files="files"
+            :allow-multiple="true"
+            :max-files="3"
+            acceptedFileTypes="image/*"
+            labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
+            @updatefiles="handleUpdateFiles"
+          />
+        </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -18,8 +28,25 @@
 </template>
 
 <script>
+import vueFilePond from 'vue-filepond'
+import 'filepond/dist/filepond.min.css'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import { generateSummary } from '@/http/ai'
+
+const FilePond = vueFilePond(FilePondPluginImagePreview)
+
 export default {
   name: 'SummarizeDialog',
-  methods: {},
+  components: { FilePond },
+  methods: {
+    async handleUpdateFiles(fileItems) {
+      for (const fileItem of fileItems) {
+        const formData = new FormData()
+        formData.append('file', fileItem.file)
+        await generateSummary(formData)
+      }
+    },
+  },
 }
 </script>

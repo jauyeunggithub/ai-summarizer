@@ -10,7 +10,7 @@ openai.api_key = os.getenv('OPEN_API_KEY')
 def get_summary(text):
     try:
         response = openai.Completion.create(
-            engine="text-davinci-003",
+            engine="gpt-4.1-nano",
             prompt=f"Summarize the following text:\n\n{text}",
             max_tokens=200
         )

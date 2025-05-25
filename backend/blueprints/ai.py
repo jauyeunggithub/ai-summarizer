@@ -41,7 +41,7 @@ def generate_summary_view():
     bucket_name = "your-bucket-name"
     result = upload_file_to_s3(temp_path, bucket_name)
 
-    text_to_summarize = request.form.get('text_to_summarize')
+    text_to_summarize = request.form.get('textToSummarize')
     summary_id = uuid.uuid4()
     summary_args = {
         'id': summary_id,

@@ -42,3 +42,9 @@ def get_summary_view():
         'totalCount': total_count,
     }
     return jsonify(response_dict), 200
+
+
+@summary_blueprint.route('/delete', methods=['DELETE'])
+@jwt_required
+def delete_summary_view():
+    pass
