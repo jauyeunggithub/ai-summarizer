@@ -4,7 +4,7 @@
   <section class="mx-auto py-3 custom-box">
     <h1 class="fs-3">Sign Up</h1>
 
-    <form>
+    <form ref="form" @submit.prevent="handleSubmit">
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
         <input
@@ -13,6 +13,8 @@
           id="email"
           placeholder="Email Address"
           v-model="user.email"
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
         />
       </div>
 
@@ -24,6 +26,7 @@
           id="password"
           placeholder="Password"
           v-model="user.password"
+          required
         />
       </div>
 
@@ -35,6 +38,7 @@
           id="confirmPassword"
           placeholder="Confirm Password"
           v-model="user.confirmPassword"
+          required
         />
       </div>
 
@@ -46,6 +50,7 @@
           id="firstName"
           placeholder="First Name"
           v-model="user.firstName"
+          required
         />
       </div>
 
@@ -57,6 +62,7 @@
           id="lastName"
           placeholder="Last Name"
           v-model="user.lastName"
+          required
         />
       </div>
 
@@ -101,6 +107,18 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      const password = this.$refs.form.elements['password']
+      const confirmPassword = this.$refs.form.elements['confirmPassword']
+      confirmPassword.setCustomValidity('')
+
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setCustomValidity('Passwords do not match.')
+      }
+
+      if (!this.$refs.form.checkValidity()) {
+        this.$refs.form.reportValidity()
+        return
+      }
       this.processing = true
       this.errorMessage = null
 

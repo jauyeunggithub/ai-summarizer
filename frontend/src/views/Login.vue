@@ -4,7 +4,7 @@
   <section class="mx-auto py-3 custom-box">
     <h1 class="fs-3">Log In</h1>
 
-    <form @submit.prevent="onLogin">
+    <form @submit.prevent="onLogin" ref="form">
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
         <input
@@ -13,6 +13,8 @@
           id="email"
           placeholder="Email Address"
           v-model="user.email"
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
         />
       </div>
 
@@ -24,6 +26,7 @@
           id="password"
           placeholder="Password"
           v-model="user.password"
+          required
         />
       </div>
 
@@ -53,6 +56,10 @@ export default {
   },
   methods: {
     async onLogin() {
+      if (!this.$refs.form.checkValidity()) {
+        this.$refs.form.reportValidity()
+        return
+      }
       const res = await login(this.user)
       const {
         data: { token },
