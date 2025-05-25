@@ -66,12 +66,35 @@
         />
       </div>
 
-      <div id="card-element" ref="cardElement" class="mb-3"></div>
+      <section v-show="!showPaymentEditForm">
+        <h2 class="fs-4">Payment Details:</h2>
+        <section class="mt-2 mb-3">
+          <div><span class="fw-bold">Card Brand:</span> {{ formattedCardBrand }}</div>
+          <div><span class="fw-bold">Card Number:</span> Ends With {{ paymentDetails.last4 }}</div>
+          <div><span class="fw-bold">Expiry Date:</span> {{ creditCardExpiryDate }}</div>
+        </section>
+        <div>
+          <button type="button" @click="showPaymentEditForm = true" class="btn btn-primary">
+            Edit
+          </button>
+        </div>
+      </section>
+      <section v-show="showPaymentEditForm">
+        <h2 class="fs-4">Payment Details:</h2>
+        <section class="py-2">
+          <div id="card-element" ref="cardElement" class="mb-3"></div>
+        </section>
+        <div>
+          <button type="button" @click="showPaymentEditForm = false" class="btn btn-primary">
+            Cancel Edit
+          </button>
+        </div>
+      </section>
 
-      <section class="px-0 pb-3 mx-0">
-        <a href="#" class="btn btn-link px-0 mx-0" @click="cancelSubscription"
-          >Cancel Subsciption</a
-        >
+      <section class="px-0 py-3 mx-0">
+        <a href="#" class="btn btn-link px-0 mx-0" @click="cancelSubscription">
+          Cancel Subsciption
+        </a>
       </section>
 
       <button type="submit" class="btn btn-primary">Save</button>
@@ -90,11 +113,30 @@ import {
   cancelSubscription as cancelSubscriptionHttp,
   getPaymentDetails as getPaymentDetailsHttp,
 } from '@/http/payment'
+import moment from 'moment'
+import { isObject } from 'lodash'
+import { startCase } from 'lodash'
+import { toLower } from 'lodash'
 
 export default {
   name: 'Profile',
   components: {
     LoggedInTopBar,
+  },
+  computed: {
+    creditCardExpiryDate() {
+      if (!isObject(this.paymentDetails)) {
+        return ''
+      }
+      const { expMonth, expYear } = this.paymentDetails
+      const date = moment({ year: expYear, month: expMonth - 1 })
+      const formatted = date.format('MMMM YYYY')
+      return formatted
+    },
+    formattedCardBrand() {
+      const { brand } = this.paymentDetails
+      return startCase(toLower(brand))
+    },
   },
   data() {
     return {
@@ -103,6 +145,7 @@ export default {
       card: undefined,
       error: undefined,
       paymentDetails: {},
+      showPaymentEditForm: false,
     }
   },
   watch: {

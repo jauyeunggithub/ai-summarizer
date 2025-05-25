@@ -61,7 +61,7 @@ def attach_payment_method_view():
 
 @payment_blueprint.route('/get_payment_details', methods=['GET'])
 @jwt_required
-def get_payment_details():
+def get_payment_details_view():
     customer_id = request.user.customer_id
     card = get_payment_details(customer_id)
     return jsonify({

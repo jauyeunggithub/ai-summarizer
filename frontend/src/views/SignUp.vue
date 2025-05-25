@@ -71,7 +71,12 @@
         />
       </div>
 
-      <div id="card-element" ref="cardElement" class="mb-3"></div>
+      <section>
+        <h2 class="fs-4 py-2">Payment Details:</h2>
+        <section class="py-2">
+          <div id="card-element" ref="cardElement" class="mb-3"></div>
+        </section>
+      </section>
 
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
