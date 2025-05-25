@@ -43,20 +43,21 @@ def generate_summary_view():
     result = upload_file_to_s3(temp_path, S3_BUCKET_NAME)
 
     text_to_summarize = request.form.get('textToSummarize')
-    summary_id = uuid.uuid4()
+    summary_id = str(uuid.uuid4())
     summary_args = {
         'id': summary_id,
         'user_id': request.user.id,
         'file_path': result['url'],
         'text_to_summarize': text_to_summarize,
         'created': datetime.datetime.now(datetime.timezone.utc),
+        'status': StatusEnum.PROCESSING.value,
+        'file_name': file.filename,
     }
     create_summary(**summary_args)
     args = {
         'summary_id': summary_id,
         'temp_path': temp_path,
         'text_to_summarize': text_to_summarize,
-        'status': StatusEnum.PROCESSING.value,
     }
     generate_ai_summary(**args)
     return jsonify(result), (200 if result["success"] else 500)

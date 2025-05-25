@@ -35,6 +35,7 @@ def get_summary_view():
             'summaryResult': result.summary_result,
             'fileName': result.file_name,
             'description': result.description,
+            'status': result.status,
         }
         response_results.append(result_dict)
     response_dict = {

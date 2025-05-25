@@ -11,8 +11,7 @@
           <FilePond
             ref="pond"
             :files="files"
-            :allow-multiple="true"
-            :max-files="3"
+            :allow-multiple="false"
             :accepted-file-types="[
               'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
               'application/pdf',
@@ -24,8 +23,12 @@
               'audio/webm',
               'audio/mpeg',
             ]"
+            max-file-size="2MB"
+            max-total-file-size="2MB"
             labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
             @updatefiles="handleUpdateFiles"
+            label-max-file-size-exceeded="File too large"
+            label-max-file-size="Max file size: {filesize}"
           />
         </div>
 
@@ -42,9 +45,10 @@ import vueFilePond from 'vue-filepond'
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import { generateSummary } from '@/http/ai'
 
-const FilePond = vueFilePond(FilePondPluginImagePreview)
+const FilePond = vueFilePond(FilePondPluginImagePreview, FilePondPluginFileValidateSize)
 
 export default {
   name: 'SummarizeDialog',

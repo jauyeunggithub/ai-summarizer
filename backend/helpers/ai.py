@@ -1,15 +1,15 @@
 import PyPDF2
-import openai
+from openai import OpenAI
 import docx
 import os
 
 
-openai.api_key = os.getenv('OPEN_API_KEY')
+client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
 
 
 def get_summary(text):
     try:
-        response = openai.Completion.create(
+        response = client.completions.create(
             engine="gpt-4.1-nano",
             prompt=f"Summarize the following text:\n\n{text}",
             max_tokens=200
@@ -47,11 +47,12 @@ def summarize_text(plain_text):
 
 def summarize_audio(file_path):
     with open(file_path, "rb") as audio_file:
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+        transcript = client.audio.transcriptions.create(
+            "whisper-1", audio_file)
 
     text = transcript["text"]
 
-    response = openai.ChatCompletion.create(
+    response = client.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a helpful assistant that summarizes transcribed audio."},

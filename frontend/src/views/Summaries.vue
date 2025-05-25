@@ -10,7 +10,7 @@
       </button>
     </section>
 
-    <section class="my-2 d-flex align-items-center">
+    <section class="my-2 d-flex align-items-center gap-2">
       <input type="search" class="form-control" id="search" placeholder="Search" v-model="search" />
 
       <select class="form-select w-25" v-model="resultsPerPage" @change="getResults()">
@@ -19,6 +19,8 @@
         <option :value="50">50</option>
         <option :value="100">100</option>
       </select>
+
+      <button type="button" class="btn btn-primary" @click="getResults()">Reload</button>
     </section>
 
     <table class="table">
@@ -26,7 +28,8 @@
         <tr>
           <th>Text to Summarize</th>
           <th>File to Summarize</th>
-          <th>Result</th>
+          <th>Summary</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +39,7 @@
             <a href="#" @click="showFile(s)">{{ s.fileName }}</a>
           </td>
           <td>{{ s.summaryResult }}</td>
+          <td>{{ s.status }}</td>
         </tr>
       </tbody>
     </table>
