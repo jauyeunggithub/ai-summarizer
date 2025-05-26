@@ -89,7 +89,7 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .filepond--file-status-sub {
+:deep(.filepond--file-status-sub) {
   display: none !important;
 }
 </style>

@@ -54,14 +54,16 @@ def generate_summary_view():
             "error": f"File size exceeds limit of {MAX_FILE_SIZE_MB} MB"
         }), 400
 
+    summary_id = str(uuid.uuid4())
     filename = secure_filename(file.filename)
-    temp_path = os.path.join("/tmp", filename)
+    unique_file_name = f'{summary_id}-{filename}'
+    temp_path = os.path.join("/tmp", unique_file_name)
     file.save(temp_path)
 
     result = upload_file_to_s3(temp_path, S3_BUCKET_NAME)
 
     text_to_summarize = request.form.get('textToSummarize')
-    summary_id = str(uuid.uuid4())
+
     summary_args = {
         'id': summary_id,
         'user_id': request.user.id,
