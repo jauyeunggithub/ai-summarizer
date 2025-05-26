@@ -11,7 +11,14 @@
     </section>
 
     <section class="my-2 d-flex align-items-center gap-2">
-      <input type="search" class="form-control" id="search" placeholder="Search" v-model="search" />
+      <input
+        type="search"
+        autocomplete="off"
+        class="form-control"
+        id="search"
+        placeholder="Search"
+        v-model="search"
+      />
 
       <select class="form-select w-25" v-model="resultsPerPage" @change="getResults()">
         <option selected disabled>Results per page</option>
@@ -26,19 +33,20 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Text to Summarize</th>
-          <th>File to Summarize</th>
+          <th>Content Being Summarized</th>
           <th>Summary</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="s of summaries" :key="s.id">
-          <td>{{ s.textToSummarize }}</td>
           <td>
-            <a href="#" @click="showFile(s)">{{ s.fileName }}</a>
+            <a href="#" v-if="s.textToSummarize">View Text Being Summarized</a>
+            <a href="#" v-else-if="s.fileName" @click="showFile(s)">{{ s.fileName }}</a>
           </td>
-          <td>{{ s.summaryResult }}</td>
+          <td>
+            <a href="#" @click.stop="onViewSummaryModalShown(s.summaryResult)">View Summary</a>
+          </td>
           <td>{{ s.status }}</td>
         </tr>
       </tbody>
@@ -61,14 +69,17 @@
     </section>
   </section>
 
-  <ViewFileDialog ref="viewFileModal" :url="url" />
+  <ViewPdfFileDialog ref="viewPdfFileModal" :url="url" />
+
+  <ViewSummaryDialog ref="viewSummaryModal" :summary-result="summaryResult" />
 
   <SummarizeDialog ref="summarizeModal" @close="closeSummarizeDialog" />
 </template>
 
 <script>
 import LoggedInTopBar from '@/components/LoggedInTopBar.vue'
-import ViewFileDialog from '@/components/ViewFileDialog.vue'
+import ViewPdfFileDialog from '@/components/ViewPdfFileDialog.vue'
+import ViewSummaryDialog from '@/components/ViewSummaryDialog.vue'
 import SummarizeDialog from '@/components/SummarizeDialog.vue'
 import { useUserStore } from '@/store/user'
 import { getSummaries as getSummariesHttp } from '@/http/summary'
@@ -79,8 +90,9 @@ export default {
   name: 'Summaries',
   components: {
     LoggedInTopBar,
-    ViewFileDialog,
+    ViewPdfFileDialog,
     SummarizeDialog,
+    ViewSummaryDialog,
   },
   data() {
     return {
@@ -88,30 +100,36 @@ export default {
       search: '',
       summaries: [],
       totalCount: 0,
-      showViewFileDialogInstance: undefined,
+      showViewPdfFileDialogInstance: undefined,
       showSummarizeDialogInstance: undefined,
+      showViewSummaryDialogInstance: undefined,
       summary: {},
       url: '',
       page: 1,
       resultsPerPage: 10,
+      summaryResult: '',
     }
   },
   async beforeMount() {
     await this.getResults()
   },
   mounted() {
-    this.showViewFileDialogInstance = new Modal(this.$refs.viewFileModal.$el)
+    this.showViewPdfFileDialogInstance = new Modal(this.$refs.viewPdfFileModal.$el)
     this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
-    this.$refs.viewFileModal.$el.addEventListener('shown.bs.modal', this.onViewFileModalShown)
+    this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
+    this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onviewPdfFileModalShown)
   },
   beforeUnmount() {
-    this.$refs.viewFileModal.$el.removeEventListener('shown.bs.modal', this.onViewFileModalShown)
+    this.$refs.viewPdfFileModal.$el.removeEventListener(
+      'shown.bs.modal',
+      this.onviewPdfFileModalShown
+    )
   },
   methods: {
     openSummarizeFileDialog() {
       this.showSummarizeDialogInstance.show()
     },
-    async onViewFileModalShown() {
+    async onviewPdfFileModalShown() {
       const res = await fetchFile({ url: this.summary.filePath })
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -119,10 +137,14 @@ export default {
       }
       reader.readAsDataURL(res.data)
     },
+    onViewSummaryModalShown(summaryResult) {
+      this.summaryResult = summaryResult
+      this.showViewSummaryDialogInstance.show()
+    },
     async showFile(summary) {
       this.summary = summary
       await this.$nextTick()
-      this.showViewFileDialogInstance.show()
+      this.showViewPdfFileDialogInstance.show()
     },
     async getNextPageResults() {
       this.page++

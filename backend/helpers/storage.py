@@ -1,6 +1,9 @@
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
+from botocore.config import Config
 import os
+from urllib.parse import urlparse, unquote
+
 
 aws_access_key = os.getenv('AWS_ACCESS_KEY')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -10,7 +13,8 @@ s3 = boto3.client(
     's3',
     region_name=aws_region,
     aws_access_key_id=aws_access_key,
-    aws_secret_access_key=aws_secret_access_key
+    aws_secret_access_key=aws_secret_access_key,
+    config=Config(signature_version='s3v4')
 )
 
 
@@ -33,3 +37,24 @@ def delete_file_from_s3(bucket_name, object_name):
         return {"success": True, "message": f"{object_name} deleted from {bucket_name}"}
     except (BotoCoreError, ClientError) as e:
         return {"success": False, "error": str(e)}
+
+
+def extract_bucket_and_key_from_url(s3_url):
+    parsed = urlparse(unquote(s3_url))
+    host_parts = parsed.netloc.split('.')
+
+    if 's3' in host_parts:
+        bucket_name = host_parts[0]
+        key = parsed.path.lstrip('/')
+    else:
+        path_parts = parsed.path.lstrip('/').split('/', 1)
+        if len(path_parts) < 2:
+            return None, None
+        bucket_name, key = path_parts
+
+    return bucket_name, key
+
+
+def is_s3_url(url):
+    parsed = urlparse(url)
+    return 's3' in parsed.netloc or parsed.netloc.endswith('amazonaws.com')
