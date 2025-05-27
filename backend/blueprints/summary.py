@@ -1,7 +1,13 @@
 from flask import Blueprint, jsonify, request
 from helpers.auth import jwt_required
-from repos.summaries import get_paginated_summary_results, count_summary_results
+from repos.summaries import (
+    get_paginated_summary_results,
+    count_summary_results,
+    update_summary,
+    get_summary,
+)
 from models.summary import Summary
+from helpers.storage import delete_s3_file_from_url
 
 
 summary_blueprint = Blueprint('summary', __name__)
@@ -47,7 +53,13 @@ def get_summary_view():
     return jsonify(response_dict), 200
 
 
-@summary_blueprint.route('/delete', methods=['DELETE'])
+@summary_blueprint.route('/delete/<summary_id>', methods=['DELETE'])
 @jwt_required
-def delete_summary_view():
-    pass
+def delete_summary_view(summary_id):
+    summary = get_summary(summary_id)
+    update_summary(summary_id=summary_id, is_deleted=True)
+    delete_s3_file_from_url(summary['file_path'])
+    response_dict = {
+        'summaryId': summary_id,
+    }
+    return jsonify(response_dict), 200

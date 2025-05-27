@@ -58,3 +58,31 @@ def extract_bucket_and_key_from_url(s3_url):
 def is_s3_url(url):
     parsed = urlparse(url)
     return 's3' in parsed.netloc or parsed.netloc.endswith('amazonaws.com')
+
+
+def delete_s3_file_from_url(s3_url):
+    parsed_url = urlparse(s3_url)
+    hostname = parsed_url.netloc
+    path = parsed_url.path.lstrip('/')
+    bucket = None
+    key = None
+
+    if hostname.endswith("amazonaws.com") and '.s3.' in hostname:
+        bucket = hostname.split('.')[0]
+        key = path
+
+    elif hostname.startswith("s3.") and hostname.endswith("amazonaws.com"):
+        parts = path.split('/', 1)
+        if len(parts) == 2:
+            bucket, key = parts
+        else:
+            raise ValueError("URL does not contain bucket and key properly.")
+
+    else:
+        raise ValueError("URL format not recognized as S3 URL.")
+
+    try:
+        s3.delete_object(Bucket=bucket, Key=key)
+        print(f"Deleted {key} from bucket {bucket}")
+    except Exception as e:
+        print(f"Error deleting object: {e}")

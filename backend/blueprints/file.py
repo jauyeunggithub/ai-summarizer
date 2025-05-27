@@ -1,23 +1,14 @@
 from flask import Blueprint, Response, request, abort
 import requests
-from helpers.storage import extract_bucket_and_key_from_url, is_s3_url
+from helpers.storage import extract_bucket_and_key_from_url, is_s3_url, s3
 import os
 from botocore.exceptions import ClientError
-import boto3
-from botocore.config import Config
 
 
 aws_access_key = os.getenv('AWS_ACCESS_KEY')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 aws_region = os.getenv('AWS_REGION')
 
-s3 = boto3.client(
-    's3',
-    region_name=aws_region,
-    aws_access_key_id=aws_access_key,
-    aws_secret_access_key=aws_secret_access_key,
-    config=Config(signature_version='s3v4')
-)
 
 file_blueprint = Blueprint('file', __name__)
 

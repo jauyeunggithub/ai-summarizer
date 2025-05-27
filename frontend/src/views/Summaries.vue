@@ -36,6 +36,7 @@
           <th>Content Being Summarized</th>
           <th>Summary</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +48,12 @@
           <td>
             <a href="#" @click.stop="onViewSummaryModalShown(s.summaryResult)">View Summary</a>
           </td>
-          <td>{{ s.status }}</td>
+          <td>
+            {{ s.status }}
+          </td>
+          <td>
+            <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -82,7 +88,10 @@ import ViewPdfFileDialog from '@/components/ViewPdfFileDialog.vue'
 import ViewSummaryDialog from '@/components/ViewSummaryDialog.vue'
 import SummarizeDialog from '@/components/SummarizeDialog.vue'
 import { useUserStore } from '@/store/user'
-import { getSummaries as getSummariesHttp } from '@/http/summary'
+import {
+  getSummaries as getSummariesHttp,
+  deleteSummary as deleteSummaryHttp,
+} from '@/http/summary'
 import { Modal } from 'bootstrap'
 import { fetchFile } from '@/http/file'
 
@@ -168,6 +177,10 @@ export default {
     },
     async closeSummarizeDialog() {
       this.showSummarizeDialogInstance.hide()
+      await this.getResults()
+    },
+    async deleteSummary(summaryId) {
+      await deleteSummaryHttp(summaryId)
       await this.getResults()
     },
   },
