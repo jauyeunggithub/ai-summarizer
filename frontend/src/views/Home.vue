@@ -14,9 +14,11 @@
       <h1 class="display-5 fw-bold">For the price of ${{ price }}, you get:</h1>
 
       <ul>
-        <li class="fs-2">Summarize .docx, .pdf, and audio files with AI</li>
+        <li class="fs-2">Summarize .docx, .pdf, and plain text with AI</li>
         <li class="fs-2">Download summaries generated</li>
         <li class="fs-2">Private storage of files</li>
+        <li class="fs-2">Risk free. Cancel anytime.</li>
+        <li class="fs-2">500 summaries per month</li>
       </ul>
     </div>
   </div>
