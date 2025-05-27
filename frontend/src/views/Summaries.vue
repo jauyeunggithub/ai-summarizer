@@ -43,7 +43,12 @@
         <tr v-for="s of summaries" :key="s.id">
           <td>
             <a href="#" v-if="s.textToSummarize">View Text Being Summarized</a>
-            <a href="#" v-else-if="s.fileName" @click="showFile(s)">{{ s.fileName }}</a>
+            <a href="#" v-else-if="s.fileName.endsWith('.pdf')" @click="showPdfFile(s)">
+              {{ s.fileName }}
+            </a>
+            <a href="#" v-else-if="s.fileName.endsWith('.docx')" @click="showDocxFile(s)">
+              {{ s.fileName }}
+            </a>
           </td>
           <td>
             <a href="#" @click.stop="onViewSummaryModalShown(s.summaryResult)">View Summary</a>
@@ -83,6 +88,12 @@
 
   <SummarizeDialog ref="summarizeModal" @close="closeSummarizeDialog" />
 
+  <ViewDocxFileDialog
+    ref="viewDocxModal"
+    :arrayBuffer="arrayBuffer"
+    @close="closeDocxViewerDialog"
+  />
+
   <ConfirmDeleteDialog
     ref="confirmDeleteModal"
     @confirm="onConfirmDelete"
@@ -96,6 +107,7 @@ import ViewPdfFileDialog from '@/components/ViewPdfFileDialog.vue'
 import ViewSummaryDialog from '@/components/ViewSummaryDialog.vue'
 import SummarizeDialog from '@/components/SummarizeDialog.vue'
 import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog.vue'
+import ViewDocxFileDialog from '@/components/ViewDocxFileDialog.vue'
 import { useUserStore } from '@/store/user'
 import {
   getSummaries as getSummariesHttp,
@@ -112,6 +124,7 @@ export default {
     SummarizeDialog,
     ViewSummaryDialog,
     ConfirmDeleteDialog,
+    ViewDocxFileDialog,
   },
   data() {
     return {
@@ -120,6 +133,7 @@ export default {
       summaries: [],
       totalCount: 0,
       showViewPdfFileDialogInstance: undefined,
+      showViewDocxFileDialogInstance: undefined,
       showSummarizeDialogInstance: undefined,
       showViewSummaryDialogInstance: undefined,
       showConfirmDeleteDialogInstance: undefined,
@@ -129,6 +143,7 @@ export default {
       resultsPerPage: 10,
       summaryResult: '',
       summaryIdToDelete: undefined,
+      arrayBuffer: undefined,
     }
   },
   async beforeMount() {
@@ -139,24 +154,40 @@ export default {
     this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
     this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
     this.showConfirmDeleteDialogInstance = new Modal(this.$refs.confirmDeleteModal.$el)
-    this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onviewPdfFileModalShown)
+    this.showViewDocxFileDialogInstance = new Modal(this.$refs.viewDocxModal.$el)
+    this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onViewPdfFileModalShown)
     this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', this.onSummarizeModalHide)
+    this.$refs.viewDocxModal.$el.addEventListener('shown.bs.modal', this.onViewDocxFileModalShown)
   },
   beforeUnmount() {
     this.$refs.viewPdfFileModal.$el.removeEventListener(
       'shown.bs.modal',
-      this.onviewPdfFileModalShown
+      this.onViewPdfFileModalShown
     )
     this.$refs.summarizeModal.$el.removeEventListener('hidden.bs.modal', this.onSummarizeModalHide)
   },
   methods: {
+    async onViewDocxFileModalShown() {
+      const res = await fetchFile({ url: this.summary.filePath })
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        this.arrayBuffer = reader.result
+      }
+      reader.readAsArrayBuffer(res.data)
+    },
+    openViewDocxDialog() {
+      this.showViewDocxFileDialogInstance.show()
+    },
+    closeDocxViewerDialog() {
+      this.showViewDocxFileDialogInstance.hide()
+    },
     onSummarizeModalHide() {
       this.getResults()
     },
     openSummarizeFileDialog() {
       this.showSummarizeDialogInstance.show()
     },
-    async onviewPdfFileModalShown() {
+    async onViewPdfFileModalShown() {
       const res = await fetchFile({ url: this.summary.filePath })
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -168,10 +199,15 @@ export default {
       this.summaryResult = summaryResult
       this.showViewSummaryDialogInstance.show()
     },
-    async showFile(summary) {
+    async showPdfFile(summary) {
       this.summary = summary
       await this.$nextTick()
       this.showViewPdfFileDialogInstance.show()
+    },
+    async showDocxFile(summary) {
+      this.summary = summary
+      await this.$nextTick()
+      this.showViewDocxFileDialogInstance.show()
     },
     async getNextPageResults() {
       this.page++
