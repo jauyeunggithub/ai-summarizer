@@ -22,4 +22,6 @@ def update_user(**args):
         user.is_active = args['is_active']
     if 'subscription_id' in args:
         user.subscription_id = args['subscription_id']
+    if 'password_reset_token' in args:
+        user.password_reset_token = args['password_reset_token']
     session.commit()

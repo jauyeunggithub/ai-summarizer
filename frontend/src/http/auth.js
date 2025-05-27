@@ -30,3 +30,7 @@ export const signup = ({
 export const getCurrentUser = () => {
   return apiClient.get('/auth/current_user')
 }
+
+export const getPasswordResetToken = ({ email }) => {
+  return apiClient.post('/auth/generate_password_reset_token', { email })
+}

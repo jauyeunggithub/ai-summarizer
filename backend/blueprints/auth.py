@@ -2,15 +2,18 @@ from flask import Blueprint, request, jsonify
 import jwt
 import datetime
 import os
-from repos.users import get_user, create_user
+from repos.users import get_user, create_user, update_user
 from helpers.payment import create_customer_with_payment_method, create_subscription
-from helpers.auth import jwt_required
+from helpers.auth import jwt_required, generate_password_reset_token
+from backend.helpers.email import send_plain_text_email
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 
 
 auth_blueprint = Blueprint('auth', __name__)
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+FRONT_END_PASSWORD_RESET_PAGE_URL = os.getenv(
+    'FRONT_END_PASSWORD_RESET_PAGE_URL')
 
 
 @auth_blueprint.route('/login', methods=['POST'])
@@ -62,6 +65,24 @@ def signup_view():
     create_user(**args)
 
     response_dict = args.pop('hashed_password')
+    return jsonify(response_dict), 200
+
+
+@auth_blueprint.route('/generate_password_reset_token', methods=['POST'])
+def generate_password_reset_token_view():
+    data = request.get_json()
+    email = data.get('email')
+    password_reset_token = generate_password_reset_token(email)
+    password_reset_url = f'{FRONT_END_PASSWORD_RESET_PAGE_URL}?token={password_reset_token}'
+    args = {
+        'to_email': email,
+        'subject': 'Reset summarizerai.online Account Password',
+        'message_text': f'Hello {email}. Please go to {password_reset_url}'
+    }
+    user = get_user(email)
+    update_user(id=user.id, password_reset_token=password_reset_token)
+    send_plain_text_email(**args)
+    response_dict = {'status': 'success'}
     return jsonify(response_dict), 200
 
 

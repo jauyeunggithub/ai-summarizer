@@ -6,11 +6,12 @@ from sendgrid.helpers.mail import Mail
 def send_plain_text_email(to_email, subject, message_text):
     try:
         sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+        from_email = os.getenv("FROM_EMAIL", "no-reply@summarizerai.online")
         if not sendgrid_api_key:
             raise Exception("SENDGRID_API_KEY not set in environment")
 
         message = Mail(
-            from_email="your@email.com",
+            from_email=from_email,
             to_emails=to_email,
             subject=subject,
             plain_text_content=message_text

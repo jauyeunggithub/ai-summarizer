@@ -7,6 +7,7 @@ import Profile from '@/views/Profile.vue'
 import Summaries from '@/views/Summaries.vue'
 import PasswordReset from '@/views/PasswordReset.vue'
 import Subscription from '@/views/Subscription.vue'
+import ForgotPassword from '@/views/ForgotPassword.vue'
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: '/passwordReset',
     name: 'PasswordReset',
     component: PasswordReset,
+  },
+  {
+    path: '/forgotPassword',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
   },
   {
     path: '/profile',

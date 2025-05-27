@@ -30,7 +30,11 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Log In</button>
+      <section class="d-flex align-items-center gap-2">
+        <button type="submit" class="btn btn-primary">Log In</button>
+
+        <router-link to="/forgotPassword"> Forgot Password </router-link>
+      </section>
     </form>
   </section>
 </template>
