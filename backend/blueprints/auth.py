@@ -57,6 +57,7 @@ def signup_view():
         'hashed_password': hashed_password,
         'customer_id': customer.id,
         'created': datetime.datetime.now(datetime.timezone.utc),
+        'is_active': True
     }
     create_user(**args)
 

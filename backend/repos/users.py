@@ -12,3 +12,14 @@ def create_user(**args):
     new_user = User(**args)
     session.add(new_user)
     session.commit()
+
+
+def update_user(**args):
+    session = Session()
+    id = args['id']
+    user = session.query(User).filter(User.id == id).first()
+    if 'is_active' in args:
+        user.is_active = args['is_active']
+    if 'subscription_id' in args:
+        user.subscription_id = args['subscription_id']
+    session.commit()

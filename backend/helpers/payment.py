@@ -97,25 +97,12 @@ def create_subscription(customer_id, payment_method_id, price_id):
         return {"error": str(e)}
 
 
-def renew_subscrption(customer_id, price_id):
-    subscriptions = stripe.Subscription.list(
-        customer=customer_id, status='canceled')
-
-    if subscriptions.data:
-        subscription_id = subscriptions.data[0].id
-        stripe.Subscription.modify(
-            subscription_id,
-            cancel_at_period_end=False,
-            items=[{
-                "id": subscriptions.data[0].items.data[0].id,
-                "price": subscriptions.data[0].items.data[0].price.id,
-            }],
-        )
-    else:
-        stripe.Subscription.create(
-            customer=customer_id,
-            items=[{"price": price_id}],
-        )
+def renew_subscription(customer_id, price_id):
+    new_subscription = stripe.Subscription.create(
+        customer=customer_id,
+        items=[{"price": price_id}],
+    )
+    return new_subscription['id']
 
 
 def cancel_subscription(subscription_id):
@@ -159,7 +146,7 @@ def get_payment_details(customer_id):
 def get_subscription_status(subscription_id):
     try:
         subscription = stripe.Subscription.retrieve(subscription_id)
-        return subscription.status
+        return subscription.to_dict()
     except stripe.error.StripeError as e:
         return f"Stripe error: {e.user_message or str(e)}"
     except Exception as e:

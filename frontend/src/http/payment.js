@@ -15,9 +15,7 @@ export const attachPaymentMethods = async ({ paymentMethodId }) => {
 }
 
 export const cancelSubscription = async () => {
-  return apiClient.post('/payment/cancel_subscription', {
-    paymentMethodId,
-  })
+  return apiClient.post('/payment/cancel_subscription')
 }
 
 export const getPaymentDetails = async () => {
@@ -26,4 +24,10 @@ export const getPaymentDetails = async () => {
 
 export const getSubscriptionStatus = async () => {
   return apiClient.get('/payment/get_subscription_status')
+}
+
+export const renewSubscription = async ({ priceId }) => {
+  return apiClient.post('/payment/renew_subscription', {
+    priceId,
+  })
 }

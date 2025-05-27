@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, Boolean, String, Date
 from sqlalchemy.dialects.postgresql import UUID
 from models.base import Base
 
@@ -17,3 +17,4 @@ class User(Base):
     subscription_id = Column(String(), unique=True, nullable=False)
     status = Column(String(), unique=True, nullable=False)
     password_reset_token = Column(String(), unique=True, nullable=False)
+    is_active = Column(Boolean(), nullable=True)

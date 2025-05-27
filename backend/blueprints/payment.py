@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from helpers.payment import (
     get_active_prices,
-    renew_subscrption,
+    renew_subscription,
     cancel_subscription,
     create_setup_intent,
     attach_payment_method,
@@ -9,6 +9,7 @@ from helpers.payment import (
     get_subscription_status,
 )
 from helpers.auth import jwt_required
+from repos.users import update_user
 
 
 payment_blueprint = Blueprint('payment', __name__)
@@ -19,13 +20,18 @@ def get_active_prices_view():
     return jsonify(get_active_prices()), 200
 
 
-@payment_blueprint.route('/renew_subscription', methods=['GET'])
+@payment_blueprint.route('/renew_subscription', methods=['POST'])
 @jwt_required
 def renew_subscription_view():
     data = request.get_json()
     customer_id = request.user.customer_id
     price_id = data.get('priceId')
-    renew_subscrption(customer_id, price_id)
+    subscription_id = renew_subscription(customer_id, price_id)
+    update_user(
+        id=request.user.id,
+        subscription_id=subscription_id,
+        is_active=True
+    )
     return jsonify(), 200
 
 
@@ -33,6 +39,7 @@ def renew_subscription_view():
 @jwt_required
 def cancel_subscription_view():
     cancel_subscription(request.user.subscription_id)
+    update_user(id=request.user.id, is_active=False, subscription_id=None)
     return jsonify(), 200
 
 
@@ -77,7 +84,5 @@ def get_payment_details_view():
 @jwt_required
 def get_subscription_status_view():
     subscription_id = request.user.subscription_id
-    status = get_subscription_status(subscription_id)
-    return jsonify({
-        'status': status,
-    })
+    subscription_dict = get_subscription_status(subscription_id)
+    return jsonify(subscription_dict)

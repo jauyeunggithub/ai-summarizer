@@ -118,6 +118,9 @@ export default {
     this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
     this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
     this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onviewPdfFileModalShown)
+    this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', () => {
+      this.getResults()
+    })
   },
   beforeUnmount() {
     this.$refs.viewPdfFileModal.$el.removeEventListener(

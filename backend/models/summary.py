@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date
+from sqlalchemy import Column, String, Date, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from models.base import Base
 
@@ -15,3 +15,4 @@ class Summary(Base):
     description = Column(String(), nullable=True)
     file_name = Column(String(), nullable=True)
     status = Column(String(), nullable=True)
+    is_deleted = Column(Boolean(), nullable=True)
