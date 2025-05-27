@@ -58,7 +58,7 @@ def get_summary_view():
 def delete_summary_view(summary_id):
     summary = get_summary(summary_id)
     update_summary(summary_id=summary_id, is_deleted=True)
-    delete_s3_file_from_url(summary['file_path'])
+    delete_s3_file_from_url(summary.file_path)
     response_dict = {
         'summaryId': summary_id,
     }

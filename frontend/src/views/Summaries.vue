@@ -52,7 +52,9 @@
             {{ s.status }}
           </td>
           <td>
-            <button class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+            <button class="btn btn-danger" @click="onDeleteButtonClick(s.id)">
+              <i class="bi bi-trash"></i> Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -80,6 +82,12 @@
   <ViewSummaryDialog ref="viewSummaryModal" :summary-result="summaryResult" />
 
   <SummarizeDialog ref="summarizeModal" @close="closeSummarizeDialog" />
+
+  <ConfirmDeleteDialog
+    ref="confirmDeleteModal"
+    @confirm="onConfirmDelete"
+    @cancel="showConfirmDeleteDialogInstance.hide()"
+  />
 </template>
 
 <script>
@@ -87,6 +95,7 @@ import LoggedInTopBar from '@/components/LoggedInTopBar.vue'
 import ViewPdfFileDialog from '@/components/ViewPdfFileDialog.vue'
 import ViewSummaryDialog from '@/components/ViewSummaryDialog.vue'
 import SummarizeDialog from '@/components/SummarizeDialog.vue'
+import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog.vue'
 import { useUserStore } from '@/store/user'
 import {
   getSummaries as getSummariesHttp,
@@ -102,6 +111,7 @@ export default {
     ViewPdfFileDialog,
     SummarizeDialog,
     ViewSummaryDialog,
+    ConfirmDeleteDialog,
   },
   data() {
     return {
@@ -112,11 +122,13 @@ export default {
       showViewPdfFileDialogInstance: undefined,
       showSummarizeDialogInstance: undefined,
       showViewSummaryDialogInstance: undefined,
+      showConfirmDeleteDialogInstance: undefined,
       summary: {},
       url: '',
       page: 1,
       resultsPerPage: 10,
       summaryResult: '',
+      summaryIdToDelete: undefined,
     }
   },
   async beforeMount() {
@@ -126,6 +138,7 @@ export default {
     this.showViewPdfFileDialogInstance = new Modal(this.$refs.viewPdfFileModal.$el)
     this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
     this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
+    this.showConfirmDeleteDialogInstance = new Modal(this.$refs.confirmDeleteModal.$el)
     this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onviewPdfFileModalShown)
     this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', () => {
       this.getResults()
@@ -182,6 +195,17 @@ export default {
     async deleteSummary(summaryId) {
       await deleteSummaryHttp(summaryId)
       await this.getResults()
+    },
+    onDeleteButtonClick(summaryId) {
+      this.summaryIdToDelete = summaryId
+      this.showConfirmDeleteDialogInstance.show()
+    },
+    async onConfirmDelete() {
+      this.showConfirmDeleteDialogInstance.hide()
+      await this.deleteSummary({ summaryId: this.summaryIdToDelete })
+      this.page = 1
+      await this.getResults()
+      this.summaryIdToDelete = undefined
     },
   },
 }
