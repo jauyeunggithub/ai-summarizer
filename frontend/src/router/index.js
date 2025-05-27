@@ -6,6 +6,7 @@ import SignUp from '@/views/SignUp.vue'
 import Profile from '@/views/Profile.vue'
 import Summaries from '@/views/Summaries.vue'
 import PasswordReset from '@/views/PasswordReset.vue'
+import Subscription from '@/views/Subscription.vue'
 
 const routes = [
   {
@@ -38,6 +39,12 @@ const routes = [
     path: '/summaries',
     name: 'Summaries',
     component: Summaries,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/subscription',
+    name: 'Subscription',
+    component: Subscription,
     meta: { requiresAuth: true },
   },
 ]

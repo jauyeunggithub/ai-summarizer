@@ -27,6 +27,9 @@
             <router-link class="nav-link" to="/profile">Profile</router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link" to="/subscription">Subscription</router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/summaries">Summaries</router-link>
           </li>
           <li class="nav-item">

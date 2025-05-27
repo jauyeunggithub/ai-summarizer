@@ -91,12 +91,6 @@
         </div>
       </section>
 
-      <section class="px-0 py-3 mx-0">
-        <a href="#" class="btn btn-link px-0 mx-0" @click="cancelSubscription">
-          Cancel Subsciption
-        </a>
-      </section>
-
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
   </section>
@@ -110,7 +104,6 @@ import { loadStripe } from '@stripe/stripe-js'
 import {
   createSetupIntent,
   attachPaymentMethods,
-  cancelSubscription as cancelSubscriptionHttp,
   getPaymentDetails as getPaymentDetailsHttp,
 } from '@/http/payment'
 import moment from 'moment'
@@ -186,9 +179,7 @@ export default {
         await attachPaymentMethods(args)
       }
     },
-    cancelSubscription() {
-      cancelSubscriptionHttp()
-    },
+
     async getPaymentDetails() {
       const { data } = await getPaymentDetailsHttp()
       this.paymentDetails = data
