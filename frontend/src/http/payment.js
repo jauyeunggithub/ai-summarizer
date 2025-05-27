@@ -23,3 +23,7 @@ export const cancelSubscription = async () => {
 export const getPaymentDetails = async () => {
   return apiClient.get('/payment/get_payment_details')
 }
+
+export const getSubscriptionStatus = async () => {
+  return apiClient.get('/payment/get_subscription_status')
+}

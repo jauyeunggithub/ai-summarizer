@@ -6,6 +6,7 @@ from helpers.payment import (
     create_setup_intent,
     attach_payment_method,
     get_payment_details,
+    get_subscription_status,
 )
 from helpers.auth import jwt_required
 
@@ -22,7 +23,7 @@ def get_active_prices_view():
 @jwt_required
 def renew_subscription_view():
     data = request.get_json()
-    customer_id = data.get('customerId')
+    customer_id = request.user.customer_id
     price_id = data.get('priceId')
     renew_subscrption(customer_id, price_id)
     return jsonify(), 200
@@ -69,4 +70,14 @@ def get_payment_details_view():
         'last4': card.last4,
         'expMonth': card.exp_month,
         'expYear': card.exp_year,
+    })
+
+
+@payment_blueprint.route('/get_subscription_status', methods=['GET'])
+@jwt_required
+def get_subscription_status_view():
+    subscription_id = request.user.subscription_id
+    status = get_subscription_status(subscription_id)
+    return jsonify({
+        'status': status,
     })

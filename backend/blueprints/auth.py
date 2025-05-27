@@ -43,8 +43,11 @@ def signup_view():
     payment_method_id = data.get('paymentMethodId')
     price_id = data.get('priceId')
     hashed_password = generate_password_hash(password)
-    subscription_id = None
     customer = create_customer_with_payment_method(email, payment_method_id)
+    subscription = create_subscription(
+        customer.id, payment_method_id, price_id
+    )
+    subscription_id = subscription['id']
     args = {
         'id': str(uuid.uuid4()),
         'email': email,
@@ -56,7 +59,7 @@ def signup_view():
         'created': datetime.datetime.now(datetime.timezone.utc),
     }
     create_user(**args)
-    create_subscription(customer.id, payment_method_id, price_id)
+
     response_dict = args.pop('hashed_password')
     return jsonify(response_dict), 200
 

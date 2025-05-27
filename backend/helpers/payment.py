@@ -90,7 +90,6 @@ def create_subscription(customer_id, payment_method_id, price_id):
         subscription = stripe.Subscription.create(
             customer=customer_id,
             items=[{'price': price_id}],
-            expand=['latest_invoice.payment_intent'],
         )
 
         return subscription
@@ -155,3 +154,13 @@ def get_payment_details(customer_id):
     pm = stripe.PaymentMethod.retrieve(default_pm_id)
     card = pm.card
     return card
+
+
+def get_subscription_status(subscription_id):
+    try:
+        subscription = stripe.Subscription.retrieve(subscription_id)
+        return subscription.status
+    except stripe.error.StripeError as e:
+        return f"Stripe error: {e.user_message or str(e)}"
+    except Exception as e:
+        return f"Error: {str(e)}"
