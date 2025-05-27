@@ -151,3 +151,24 @@ def get_subscription_status(subscription_id):
         return f"Stripe error: {e.user_message or str(e)}"
     except Exception as e:
         return f"Error: {str(e)}"
+
+
+def is_subscription_paid(subscription_id):
+    try:
+        subscription = stripe.Subscription.retrieve(subscription_id)
+        if subscription.status != "active":
+            return False
+
+        latest_invoice_id = subscription.get("latest_invoice")
+        if not latest_invoice_id:
+            print("No latest invoice found — possibly trialing or incomplete.")
+            return False
+
+        invoice = stripe.Invoice.retrieve(latest_invoice_id)
+        return invoice.to_dict().get("status") == "paid"
+    except stripe.error.StripeError as e:
+        print(f"Stripe error: {e}")
+        return False
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return False

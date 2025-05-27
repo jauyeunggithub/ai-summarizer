@@ -27,6 +27,13 @@
         Renew Subscription
       </button>
     </section>
+
+    <section class="py-4">
+      <h2 class="fs-4 py-0 my-0">Payment Status</h2>
+
+      <div class="py-3" v-if="subscriptionPaid">Your subscription has been paid.</div>
+      <div class="py-3" v-else>Your subscription has not been paid.</div>
+    </section>
   </section>
 </template>
 
@@ -37,6 +44,7 @@ import {
   getSubscriptionStatus as getSubscriptionStatusHttp,
   renewSubscription as renewSubscriptionHttp,
   getActivePrices,
+  getIsSubscriptionPaid as getIsSubscriptionPaidHttp,
 } from '@/http/payment'
 
 export default {
@@ -48,10 +56,12 @@ export default {
     return {
       subscription: {},
       loading: false,
+      subscriptionPaid: false,
     }
   },
   beforeMount() {
     this.getSubscriptionStatus()
+    this.getIsSubscriptionPaid()
   },
   methods: {
     async cancelSubscription() {
@@ -75,6 +85,12 @@ export default {
     async getSubscriptionStatus() {
       const { data } = await getSubscriptionStatusHttp()
       this.subscription = data
+    },
+    async getIsSubscriptionPaid() {
+      const {
+        data: { paid },
+      } = await getIsSubscriptionPaidHttp()
+      this.subscriptionPaid = paid
     },
   },
 }

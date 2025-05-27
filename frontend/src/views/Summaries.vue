@@ -140,17 +140,19 @@ export default {
     this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
     this.showConfirmDeleteDialogInstance = new Modal(this.$refs.confirmDeleteModal.$el)
     this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onviewPdfFileModalShown)
-    this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', () => {
-      this.getResults()
-    })
+    this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', this.onSummarizeModalHide)
   },
   beforeUnmount() {
     this.$refs.viewPdfFileModal.$el.removeEventListener(
       'shown.bs.modal',
       this.onviewPdfFileModalShown
     )
+    this.$refs.summarizeModal.$el.removeEventListener('hidden.bs.modal', this.onSummarizeModalHide)
   },
   methods: {
+    onSummarizeModalHide() {
+      this.getResults()
+    },
     openSummarizeFileDialog() {
       this.showSummarizeDialogInstance.show()
     },
@@ -180,8 +182,8 @@ export default {
       await this.getResults()
     },
     async getResults() {
-      const { page, resultsPerPage, search } = this
-      const args = { page, perPage: resultsPerPage, keyword: search }
+      const { page, resultsPerPage } = this
+      const args = { page, perPage: resultsPerPage }
       const {
         data: { results, totalCount },
       } = await getSummariesHttp(args)

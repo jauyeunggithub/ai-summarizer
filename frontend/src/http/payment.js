@@ -31,3 +31,7 @@ export const renewSubscription = async ({ priceId }) => {
     priceId,
   })
 }
+
+export const getIsSubscriptionPaid = async () => {
+  return apiClient.get('/payment/is_subscription_paid')
+}

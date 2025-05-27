@@ -7,6 +7,7 @@ from helpers.payment import (
     attach_payment_method,
     get_payment_details,
     get_subscription_status,
+    is_subscription_paid
 )
 from helpers.auth import jwt_required
 from repos.users import update_user
@@ -86,3 +87,11 @@ def get_subscription_status_view():
     subscription_id = request.user.subscription_id
     subscription_dict = get_subscription_status(subscription_id)
     return jsonify(subscription_dict)
+
+
+@payment_blueprint.route('/is_subscription_paid', methods=['GET'])
+@jwt_required
+def is_subscription_paid_view():
+    subscription_id = request.user.subscription_id
+    subscription_paid = is_subscription_paid(subscription_id)
+    return jsonify({'paid': subscription_paid})
