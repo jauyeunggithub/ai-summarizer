@@ -25,3 +25,12 @@ def update_user(**args):
     if 'password_reset_token' in args:
         user.password_reset_token = args['password_reset_token']
     session.commit()
+
+
+def reset_user_password(password_reset_token, new_hashed_password):
+    session = Session()
+    user = session.query(User).filter(
+        User.password_reset_token == password_reset_token).first()
+    user.hashed_password = new_hashed_password
+    user.password_reset_token = None
+    session.commit()

@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify
 import jwt
 import datetime
 import os
-from repos.users import get_user, create_user, update_user
+from repos.users import get_user, create_user, update_user, reset_user_password
 from helpers.payment import create_customer_with_payment_method, create_subscription
-from helpers.auth import jwt_required, generate_password_reset_token
-from backend.helpers.email import send_plain_text_email
+from helpers.auth import jwt_required, generate_password_reset_token, verify_password_reset_token
+from helpers.email import send_plain_text_email
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 
@@ -13,7 +13,8 @@ import uuid
 auth_blueprint = Blueprint('auth', __name__)
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 FRONT_END_PASSWORD_RESET_PAGE_URL = os.getenv(
-    'FRONT_END_PASSWORD_RESET_PAGE_URL')
+    'FRONT_END_PASSWORD_RESET_PAGE_URL'
+)
 
 
 @auth_blueprint.route('/login', methods=['POST'])
@@ -77,11 +78,31 @@ def generate_password_reset_token_view():
     args = {
         'to_email': email,
         'subject': 'Reset summarizerai.online Account Password',
-        'message_text': f'Hello {email}. Please go to {password_reset_url}'
+        'message_text': f'Hello {email}. Please go to {password_reset_url} to reset your password.'
     }
     user = get_user(email)
+    if not user:
+        response_dict = {'error': 'User not found'}
+        return jsonify(response_dict), 404
     update_user(id=user.id, password_reset_token=password_reset_token)
     send_plain_text_email(**args)
+    response_dict = {'status': 'success'}
+    return jsonify(response_dict), 200
+
+
+@auth_blueprint.route('/reset_password', methods=['POST'])
+def reset_password_view():
+    data = request.get_json()
+    password = data.get('password')
+    password_reset_token = data.get('passwordResetToken')
+    if not verify_password_reset_token(password_reset_token):
+        response_dict = {'error': 'Password reset token is not valid.'}
+        return jsonify(response_dict), 400
+    new_hashed_password = generate_password_hash(password)
+    reset_user_password(
+        password_reset_token,
+        new_hashed_password=new_hashed_password
+    )
     response_dict = {'status': 'success'}
     return jsonify(response_dict), 200
 
