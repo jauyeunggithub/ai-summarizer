@@ -7,7 +7,16 @@
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
-        <div class="modal-body m-0 p-0"></div>
+        <div class="modal-body m-0 p-2" :style="{ height: '70vh' }">
+          <label for="textToSummarize" class="form-label">Text to Summarize</label>
+          <textarea
+            :style="{ height: '90%' }"
+            class="form-control"
+            id="textToSummarize"
+            placeholder="Text to Summarize"
+            v-model="textToSummarize"
+          ></textarea>
+        </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="summarizeText">
@@ -20,16 +29,19 @@
 </template>
 
 <script>
-import { generateSummary } from '@/http/ai'
+import { generateTextSummary } from '@/http/ai'
 
 export default {
   name: 'SummarizeTextDialog',
   emits: ['close'],
   data() {
-    return {}
+    return {
+      textToSummarize: '',
+    }
   },
   methods: {
     async summarizeText() {
+      await generateTextSummary({ textToSummarize })
       this.$emit('close')
     },
     close() {

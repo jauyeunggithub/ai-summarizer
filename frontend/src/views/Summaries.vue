@@ -167,6 +167,7 @@ export default {
     this.showViewDocxFileDialogInstance = new Modal(this.$refs.viewDocxModal.$el)
     this.$refs.viewPdfFileModal.$el.addEventListener('shown.bs.modal', this.onViewPdfFileModalShown)
     this.$refs.summarizeModal.$el.addEventListener('hidden.bs.modal', this.onSummarizeModalHide)
+    this.$refs.summarizeTextModal.$el.addEventListener('hidden.bs.modal', this.onSummarizeModalHide)
     this.$refs.viewDocxModal.$el.addEventListener('shown.bs.modal', this.onViewDocxFileModalShown)
   },
   beforeUnmount() {
@@ -175,6 +176,10 @@ export default {
       this.onViewPdfFileModalShown
     )
     this.$refs.summarizeModal.$el.removeEventListener('hidden.bs.modal', this.onSummarizeModalHide)
+    this.$refs.summarizeTextModal.$el.removeEventListener(
+      'hidden.bs.modal',
+      this.onSummarizeModalHide
+    )
   },
   methods: {
     openSummarizeTextDialog() {

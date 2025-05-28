@@ -8,6 +8,8 @@
         </div>
 
         <div class="modal-body m-0 p-0">
+          <section>Max file size 2MB. Supported Format: DOCX, PDF.</section>
+
           <FilePond
             ref="pond"
             :files="files"

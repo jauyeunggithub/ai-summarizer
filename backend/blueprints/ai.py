@@ -81,3 +81,44 @@ def generate_summary_view():
     }
     generate_ai_summary(**args)
     return jsonify(result), (200 if result["success"] else 500)
+
+
+@ai_blueprint.route('/generate_text_summary', methods=['POST'])
+@jwt_required
+def generate_text_summary_view():
+    today = date.today()
+    first_day = date(today.year, today.month, 1)
+    last_day = date(today.year, today.month,
+                    calendar.monthrange(today.year, today.month)[1])
+    conditions = [
+        Summary.created >= first_day,
+        Summary.created <= last_day,
+        Summary.user_id == request.user.id
+    ]
+    if count_summary_results_and(conditions) >= MAX_SUMMARIES_PER_MONTH:
+        return jsonify({"success": False, "error": "You have reached the limit for summary generation for this month"}), 400
+
+    summary_id = str(uuid.uuid4())
+
+    text_to_summarize = request.json.get('textToSummarize')
+
+    summary_args = {
+        'id': summary_id,
+        'user_id': request.user.id,
+        'file_path': None,
+        'text_to_summarize': text_to_summarize,
+        'created': datetime.datetime.now(datetime.timezone.utc),
+        'status': StatusEnum.PROCESSING.value,
+        'file_name': None,
+    }
+    create_summary(**summary_args)
+    args = {
+        'summary_id': summary_id,
+        'temp_path': None,
+        'text_to_summarize': text_to_summarize,
+    }
+    generate_ai_summary(**args)
+    response_dict = {
+        'status': 'success'
+    }
+    return jsonify(response_dict), 200
