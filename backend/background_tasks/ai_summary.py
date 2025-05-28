@@ -27,13 +27,14 @@ def generate_ai_summary(summary_id, temp_path, text_to_summarize=None):
         mimetypes.add_type(
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.docx'
         )
-        mime_type, encoding = mimetypes.guess_type(temp_path)
-        if mime_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            summary_result = summarize_docx(temp_path)
-        elif mime_type == 'application/pdf':
-            summary_result = summarize_pdf(temp_path)
-        elif mime_type in SUPPORTED_AUDIO_MIME_TYPES:
-            summary_result = summarize_audio(temp_path)
+        if temp_path:
+            mime_type, encoding = mimetypes.guess_type(temp_path)
+            if mime_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                summary_result = summarize_docx(temp_path)
+            elif mime_type == 'application/pdf':
+                summary_result = summarize_pdf(temp_path)
+            elif mime_type in SUPPORTED_AUDIO_MIME_TYPES:
+                summary_result = summarize_audio(temp_path)
         elif text_to_summarize:
             summary_result = summarize_text(text_to_summarize)
 
@@ -48,7 +49,8 @@ def generate_ai_summary(summary_id, temp_path, text_to_summarize=None):
 
         }
         update_summary(**new_args)
-        os.remove(temp_path)
+        if temp_path:
+            os.remove(temp_path)
     except:
         traceback.print_exc()
         summary = get_summary(summary_id)

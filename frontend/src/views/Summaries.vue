@@ -9,12 +9,16 @@
       {{ userStore.currentUser.maxSummariesPerMonth }}
     </div>
 
+    <div class="alert alert-danger" v-if="!subscriptionPaid">
+      Your subscription is not yet paid.
+    </div>
+
     <section class="d-flex my-2 gap-2">
       <button
         type="button"
         class="btn btn-primary"
         @click="openSummarizeFileDialog()"
-        :disable="quotaIsReached"
+        :disable="quotaIsReached || !subscriptionPaid"
       >
         Summarize New File
       </button>
@@ -23,7 +27,7 @@
         type="button"
         class="btn btn-primary"
         @click="openSummarizeTextDialog()"
-        :disable="quotaIsReached"
+        :disable="quotaIsReached || !subscriptionPaid"
       >
         Summarize New Text
       </button>
@@ -44,6 +48,7 @@
         <option :value="10">10</option>
         <option :value="50">50</option>
         <option :value="100">100</option>
+        <option :value="500">500</option>
       </select>
 
       <button type="button" class="btn btn-primary" @click="getResults()">Reload</button>
@@ -139,6 +144,7 @@ import {
 } from '@/http/summary'
 import { Modal } from 'bootstrap'
 import { fetchFile } from '@/http/file'
+import { getIsSubscriptionPaid as getIsSubscriptionPaidHttp } from '@/http/payment'
 
 export default {
   name: 'Summaries',
@@ -176,10 +182,12 @@ export default {
       summaryResult: '',
       summaryIdToDelete: undefined,
       arrayBuffer: undefined,
+      subscriptionPaid: false,
     }
   },
-  async beforeMount() {
-    await this.getResults()
+  beforeMount() {
+    this.getResults()
+    this.getIsSubscriptionPaid()
   },
   mounted() {
     this.showViewPdfFileDialogInstance = new Modal(this.$refs.viewPdfFileModal.$el)
@@ -288,6 +296,12 @@ export default {
       this.page = 1
       await this.getResults()
       this.summaryIdToDelete = undefined
+    },
+    async getIsSubscriptionPaid() {
+      const {
+        data: { paid },
+      } = await getIsSubscriptionPaidHttp()
+      this.subscriptionPaid = paid
     },
   },
 }

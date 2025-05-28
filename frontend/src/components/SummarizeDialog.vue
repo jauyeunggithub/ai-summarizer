@@ -8,7 +8,9 @@
         </div>
 
         <div class="modal-body m-0 p-0">
-          <section>Max file size 2MB. Supported Format: DOCX, PDF.</section>
+          <div class="alert alert-danger" v-if="error">{{ error }}</div>
+
+          <section class="px-3 py-2">Max file size 2MB. Supported Format: DOCX, PDF.</section>
 
           <FilePond
             ref="pond"
@@ -65,6 +67,7 @@ export default {
         'audio/wav',
         'audio/webm',
       ],
+      error: '',
     }
   },
   methods: {
@@ -72,11 +75,17 @@ export default {
       this.fileItems = fileItems
     },
     async summarizeFile() {
-      for (const fileItem of this.fileItems) {
-        const formData = new FormData()
-        formData.append('file', fileItem.file)
-        await generateSummary(formData)
+      this.error = ''
+      try {
+        for (const fileItem of this.fileItems) {
+          const formData = new FormData()
+          formData.append('file', fileItem.file)
+          await generateSummary(formData)
+        }
+      } catch (error) {
+        this.error = rror.response?.data?.error
       }
+
       this.$refs.pond.removeFiles()
       this.fileItems = []
       this.$emit('close')

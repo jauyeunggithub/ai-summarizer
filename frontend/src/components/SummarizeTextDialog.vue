@@ -8,11 +8,12 @@
         </div>
 
         <div class="modal-body m-0 p-2" :style="{ height: '70vh' }">
+          <div class="alert alert-danger" v-if="error">{{ error }}</div>
+
           <label for="textToSummarize" class="form-label">Text to Summarize</label>
           <textarea
             :style="{ height: '90%' }"
             class="form-control"
-            id="textToSummarize"
             placeholder="Text to Summarize"
             v-model="textToSummarize"
           ></textarea>
@@ -37,12 +38,19 @@ export default {
   data() {
     return {
       textToSummarize: '',
+      error: '',
     }
   },
   methods: {
     async summarizeText() {
-      await generateTextSummary({ textToSummarize })
-      this.$emit('close')
+      this.error = ''
+      try {
+        const { textToSummarize } = this
+        await generateTextSummary({ textToSummarize })
+        this.$emit('close')
+      } catch (error) {
+        this.error = error.response?.data?.error
+      }
     },
     close() {
       this.$emit('close')
