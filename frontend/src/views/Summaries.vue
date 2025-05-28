@@ -4,12 +4,27 @@
   <section class="mx-auto py-3 custom-box">
     <h1 class="fs-3">Welcome, {{ userStore.currentUser.firstName }}. Here are your summaries:</h1>
 
+    <div class="alert alert-danger" v-if="quotaIsReached">
+      You have reached the limit for creating summaries for this month. Limit for this month is
+      {{ userStore.currentUser.maxSummariesPerMonth }}
+    </div>
+
     <section class="d-flex my-2 gap-2">
-      <button type="button" class="btn btn-primary" @click="openSummarizeFileDialog()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="openSummarizeFileDialog()"
+        :disable="quotaIsReached"
+      >
         Summarize New File
       </button>
 
-      <button type="button" class="btn btn-primary" @click="openSummarizeTextDialog()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="openSummarizeTextDialog()"
+        :disable="quotaIsReached"
+      >
         Summarize New Text
       </button>
     </section>
@@ -40,6 +55,7 @@
           <th>Content Being Summarized</th>
           <th>Summary</th>
           <th>Status</th>
+          <th>Created Date</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -60,6 +76,7 @@
           <td>
             {{ s.status }}
           </td>
+          <td>{{ $formatDate(s.created) }}</td>
           <td>
             <button class="btn btn-danger" @click="onDeleteButtonClick(s.id)">
               <i class="bi bi-trash"></i> Delete
@@ -133,6 +150,12 @@ export default {
     ViewSummaryDialog,
     ConfirmDeleteDialog,
     ViewDocxFileDialog,
+  },
+  computed: {
+    quotaIsReached() {
+      const { numSummariesCreatedThisMonth, maxSummariesPerMonth } = this.userStore.currentUser
+      return numSummariesCreatedThisMonth >= maxSummariesPerMonth
+    },
   },
   data() {
     return {

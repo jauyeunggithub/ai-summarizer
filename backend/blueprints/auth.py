@@ -8,6 +8,11 @@ from helpers.auth import jwt_required, generate_password_reset_token, verify_pas
 from helpers.email import send_plain_text_email
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
+import datetime
+from datetime import date
+from repos.summaries import count_summary_results_and
+import calendar
+from models.summary import Summary
 
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -15,6 +20,7 @@ JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 FRONT_END_PASSWORD_RESET_PAGE_URL = os.getenv(
     'FRONT_END_PASSWORD_RESET_PAGE_URL'
 )
+MAX_SUMMARIES_PER_MONTH = os.getenv('MAX_SUMMARIES_PER_MONTH')
 
 
 @auth_blueprint.route('/login', methods=['POST'])
@@ -111,6 +117,19 @@ def reset_password_view():
 @jwt_required
 def current_user_view():
     user = request.user
+    today = date.today()
+    first_day = date(today.year, today.month, 1)
+    last_day = date(
+        today.year,
+        today.month,
+        calendar.monthrange(today.year, today.month)[1]
+    )
+    conditions = [
+        Summary.created >= first_day,
+        Summary.created <= last_day,
+        Summary.user_id == request.user.id
+    ]
+    num_summaries_created_this_month = count_summary_results_and(conditions)
     response_dict = {
         'email': user.email,
         'firstName': user.first_name,
@@ -118,5 +137,7 @@ def current_user_view():
         'subscriptionId': user.subscription_id,
         'created': user.created,
         'customerId': user.customer_id,
+        'numSummariesCreatedThisMonth': num_summaries_created_this_month,
+        'maxSummariesPerMonth': MAX_SUMMARIES_PER_MONTH,
     }
     return jsonify(response_dict), 200
