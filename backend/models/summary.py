@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Date, Boolean
+from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from models.base import Base
 
@@ -10,7 +10,7 @@ class Summary(Base):
     user_id = Column(UUID(as_uuid=True), nullable=False)
     file_path = Column(String(), nullable=True)
     text_to_summarize = Column(String(), nullable=True)
-    created = Column(Date, nullable=False)
+    created = Column(DateTime, nullable=False)
     summary_result = Column(String(), nullable=True)
     description = Column(String(), nullable=True)
     file_name = Column(String(), nullable=True)

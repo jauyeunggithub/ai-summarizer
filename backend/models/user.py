@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, String, Date
+from sqlalchemy import Column, Boolean, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from models.base import Base
 
@@ -11,7 +11,7 @@ class User(Base):
     first_name = Column(String(300), nullable=False)
     last_name = Column(String(300), nullable=False)
     subscription_id = Column(String(300), unique=True, nullable=False)
-    created = Column(Date, nullable=False)
+    created = Column(DateTime, nullable=False)
     hashed_password = Column(String(500), unique=True, nullable=False)
     customer_id = Column(String(), unique=True, nullable=False)
     subscription_id = Column(String(), unique=True, nullable=False)
