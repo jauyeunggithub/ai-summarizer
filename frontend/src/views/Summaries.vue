@@ -4,9 +4,13 @@
   <section class="mx-auto py-3 custom-box">
     <h1 class="fs-3">Welcome, {{ userStore.currentUser.firstName }}. Here are your summaries:</h1>
 
-    <section class="my-2">
+    <section class="d-flex my-2 gap-2">
       <button type="button" class="btn btn-primary" @click="openSummarizeFileDialog()">
         Summarize New File
+      </button>
+
+      <button type="button" class="btn btn-primary" @click="openSummarizeTextDialog()">
+        Summarize New Text
       </button>
     </section>
 
@@ -88,6 +92,8 @@
 
   <SummarizeDialog ref="summarizeModal" @close="closeSummarizeDialog" />
 
+  <SummarizeTextDialog ref="summarizeTextModal" @close="closeSummarizeTextDialog" />
+
   <ViewDocxFileDialog
     ref="viewDocxModal"
     :arrayBuffer="arrayBuffer"
@@ -106,6 +112,7 @@ import LoggedInTopBar from '@/components/LoggedInTopBar.vue'
 import ViewPdfFileDialog from '@/components/ViewPdfFileDialog.vue'
 import ViewSummaryDialog from '@/components/ViewSummaryDialog.vue'
 import SummarizeDialog from '@/components/SummarizeDialog.vue'
+import SummarizeTextDialog from '@/components/SummarizeTextDialog.vue'
 import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog.vue'
 import ViewDocxFileDialog from '@/components/ViewDocxFileDialog.vue'
 import { useUserStore } from '@/store/user'
@@ -122,6 +129,7 @@ export default {
     LoggedInTopBar,
     ViewPdfFileDialog,
     SummarizeDialog,
+    SummarizeTextDialog,
     ViewSummaryDialog,
     ConfirmDeleteDialog,
     ViewDocxFileDialog,
@@ -135,6 +143,7 @@ export default {
       showViewPdfFileDialogInstance: undefined,
       showViewDocxFileDialogInstance: undefined,
       showSummarizeDialogInstance: undefined,
+      showSummarizeTextDialogInstance: undefined,
       showViewSummaryDialogInstance: undefined,
       showConfirmDeleteDialogInstance: undefined,
       summary: {},
@@ -152,6 +161,7 @@ export default {
   mounted() {
     this.showViewPdfFileDialogInstance = new Modal(this.$refs.viewPdfFileModal.$el)
     this.showSummarizeDialogInstance = new Modal(this.$refs.summarizeModal.$el)
+    this.showSummarizeTextDialogInstance = new Modal(this.$refs.summarizeTextModal.$el)
     this.showViewSummaryDialogInstance = new Modal(this.$refs.viewSummaryModal.$el)
     this.showConfirmDeleteDialogInstance = new Modal(this.$refs.confirmDeleteModal.$el)
     this.showViewDocxFileDialogInstance = new Modal(this.$refs.viewDocxModal.$el)
@@ -167,6 +177,12 @@ export default {
     this.$refs.summarizeModal.$el.removeEventListener('hidden.bs.modal', this.onSummarizeModalHide)
   },
   methods: {
+    openSummarizeTextDialog() {
+      this.showSummarizeTextDialogInstance.show()
+    },
+    closeSummarizeTextDialog() {
+      this.showSummarizeTextDialogInstance.hide()
+    },
     async onViewDocxFileModalShown() {
       const res = await fetchFile({ url: this.summary.filePath })
       const reader = new FileReader()
