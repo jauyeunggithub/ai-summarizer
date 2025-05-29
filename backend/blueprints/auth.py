@@ -139,5 +139,6 @@ def current_user_view():
         'customerId': user.customer_id,
         'numSummariesCreatedThisMonth': num_summaries_created_this_month,
         'maxSummariesPerMonth': MAX_SUMMARIES_PER_MONTH,
+        'isSuperUser': user.is_super_user,
     }
     return jsonify(response_dict), 200

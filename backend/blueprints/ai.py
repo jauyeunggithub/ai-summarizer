@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from background_tasks.ai_summary import generate_ai_summary
 from helpers.auth import jwt_required
 from helpers.storage import upload_file_to_s3
+from helpers.payment import is_subscription_paid
 from repos.summaries import create_summary, count_summary_results_and
 import os
 import uuid
@@ -27,8 +28,11 @@ MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 def generate_summary_view():
     today = date.today()
     first_day = date(today.year, today.month, 1)
-    last_day = date(today.year, today.month,
-                    calendar.monthrange(today.year, today.month)[1])
+    last_day = date(
+        today.year,
+        today.month,
+        calendar.monthrange(today.year, today.month)[1]
+    )
     conditions = [
         Summary.created >= first_day,
         Summary.created <= last_day,
@@ -36,6 +40,9 @@ def generate_summary_view():
     ]
     if count_summary_results_and(conditions) >= MAX_SUMMARIES_PER_MONTH:
         return jsonify({"success": False, "error": "You have reached the limit for summary generation for this month"}), 400
+
+    if not is_subscription_paid(request.user.subscription_id):
+        return jsonify({"success": False, "error": "Your subscription is not yet paid"}), 400
 
     if 'file' not in request.files:
         return jsonify({"success": False, "error": "No file part in the request"}), 400
@@ -88,8 +95,11 @@ def generate_summary_view():
 def generate_text_summary_view():
     today = date.today()
     first_day = date(today.year, today.month, 1)
-    last_day = date(today.year, today.month,
-                    calendar.monthrange(today.year, today.month)[1])
+    last_day = date(
+        today.year,
+        today.month,
+        calendar.monthrange(today.year, today.month)[1]
+    )
     conditions = [
         Summary.created >= first_day,
         Summary.created <= last_day,
@@ -97,6 +107,9 @@ def generate_text_summary_view():
     ]
     if count_summary_results_and(conditions) >= MAX_SUMMARIES_PER_MONTH:
         return jsonify({"success": False, "error": "You have reached the limit for summary generation for this month"}), 400
+
+    if not is_subscription_paid(request.user.subscription_id):
+        return jsonify({"success": False, "error": "Your subscription is not yet paid"}), 400
 
     summary_id = str(uuid.uuid4())
 

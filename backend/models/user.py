@@ -18,3 +18,4 @@ class User(Base):
     status = Column(String(), unique=True, nullable=False)
     password_reset_token = Column(String(), unique=True, nullable=False)
     is_active = Column(Boolean(), nullable=True)
+    is_super_user = Column(Boolean(), nullable=True)

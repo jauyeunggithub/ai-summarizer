@@ -18,7 +18,7 @@
         type="button"
         class="btn btn-primary"
         @click="openSummarizeFileDialog()"
-        :disable="quotaIsReached || !subscriptionPaid"
+        :disabled="quotaIsReached || !subscriptionPaid"
       >
         Summarize New File
       </button>
@@ -27,7 +27,7 @@
         type="button"
         class="btn btn-primary"
         @click="openSummarizeTextDialog()"
-        :disable="quotaIsReached || !subscriptionPaid"
+        :disabled="quotaIsReached || !subscriptionPaid"
       >
         Summarize New Text
       </button>
