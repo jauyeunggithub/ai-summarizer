@@ -54,57 +54,93 @@
       <button type="button" class="btn btn-primary" @click="getResults()">Reload</button>
     </section>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Content Being Summarized</th>
-          <th>Summary</th>
-          <th>Status</th>
-          <th>Created Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="s of summaries" :key="s.id">
-          <td>
-            <a href="#" v-if="s.textToSummarize">View Text Being Summarized</a>
-            <a href="#" v-else-if="s.fileName.endsWith('.pdf')" @click="showPdfFile(s)">
-              {{ s.fileName }}
-            </a>
-            <a href="#" v-else-if="s.fileName.endsWith('.docx')" @click="showDocxFile(s)">
-              {{ s.fileName }}
-            </a>
-          </td>
-          <td>
-            <a href="#" @click.stop="onViewSummaryModalShown(s.summaryResult)">View Summary</a>
-          </td>
-          <td>
-            {{ s.status }}
-          </td>
-          <td>{{ $formatDate(s.created) }}</td>
-          <td>
-            <button class="btn btn-danger" @click="onDeleteButtonClick(s.id)">
-              <i class="bi bi-trash"></i> Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <section class="my-2 d-flex justify-content-center align-items-center">
-      <nav>
-        <ul class="pagination">
-          <li class="page-item" :aria-disabled="page === 1 ? 'true' : 'false'">
+    <section class="d-flex justify-content-between align-items-center w-100">
+      <nav class="py-0 my-0">
+        <ul class="pagination py-0 my-0">
+          <li class="page-item py-0 my-0" :class="{ disabled: page === 1 }">
             <a class="page-link" href="#" @click="getPrevPageResults()"> Previous </a>
           </li>
           <li
-            class="page-item"
+            class="page-item py-0 my-0"
+            :class="{ disabled: page * resultsPerPage >= totalCount }"
+          >
+            <a class="page-link" href="#" @click="getNextPageResults()"> Next </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div>{{ paginationText }}</div>
+    </section>
+
+    <section class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Content Being Summarized</th>
+            <th>Summary</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="s of summaries" :key="s.id">
+            <td :style="{ 'max-width': '300px' }">
+              <div class="w-100">
+                <a href="#" v-if="s.textToSummarize">
+                  <div class="text-truncate overflow-hidden text-nowrap">
+                    {{ s.textToSummarize }}
+                  </div>
+                </a>
+                <a href="#" v-else-if="s.fileName.endsWith('.pdf')" @click="showPdfFile(s)">
+                  {{ s.fileName }}
+                </a>
+                <a href="#" v-else-if="s.fileName.endsWith('.docx')" @click="showDocxFile(s)">
+                  {{ s.fileName }}
+                </a>
+              </div>
+            </td>
+            <td>
+              <a href="#" @click.stop="onViewSummaryModalShown(s.summaryResult)">View Summary</a>
+            </td>
+            <td>
+              {{ s.status }}
+            </td>
+            <td>{{ $formatDate(s.created) }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-1">
+                <button
+                  class="btn btn-primary"
+                  @click="downloadStringAsFile('summary.txt', s.summaryResult)"
+                >
+                  Download Summary
+                </button>
+                <button class="btn btn-danger" @click="onDeleteButtonClick(s.id)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="my-2 d-flex justify-content-between align-items-center">
+      <nav>
+        <ul class="pagination py-0 my-0">
+          <li class="page-item py-0 my-0" :aria-disabled="page === 1 ? 'true' : 'false'">
+            <a class="page-link" href="#" @click="getPrevPageResults()"> Previous </a>
+          </li>
+          <li
+            class="page-item py-0 my-0"
             :aria-disabled="page * resultsPerPage >= totalCount ? 'true' : 'false'"
           >
             <a class="page-link" href="#" @click="getNextPageResults()"> Next </a>
           </li>
         </ul>
       </nav>
+
+      <div>{{ paginationText }}</div>
     </section>
   </section>
 
@@ -161,6 +197,12 @@ export default {
     quotaIsReached() {
       const { numSummariesCreatedThisMonth, maxSummariesPerMonth } = this.userStore.currentUser
       return numSummariesCreatedThisMonth >= maxSummariesPerMonth
+    },
+    paginationText() {
+      const { page, resultsPerPage, totalCount, summaries } = this
+      const start = (page - 1) * resultsPerPage + 1
+      const end = page * resultsPerPage
+      return `${start} - ${end} of ${totalCount}`
     },
   },
   data() {
@@ -302,6 +344,19 @@ export default {
         data: { paid },
       } = await getIsSubscriptionPaidHttp()
       this.subscriptionPaid = paid
+    },
+    downloadStringAsFile(filename, text) {
+      const blob = new Blob([text], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     },
   },
 }
