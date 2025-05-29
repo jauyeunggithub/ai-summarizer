@@ -97,5 +97,30 @@ services:
       start_period: 5s
       timeout: 5s
 
+  db_restore:
+    image: python:3.10-slim
+    container_name: db_restore
+    volumes:
+      - ./backup:/app
+    working_dir: /app
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET_NAME=summarizerai-test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DB_HOST=db
+      - POSTGRES_DB=postgres
+    depends_on:
+      - db
+    restart: "no"
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "pip install boto3 psycopg2-binary && python restore.py $S3_KEY",
+      ]
+
 volumes:
   postgres_data:
