@@ -41,7 +41,7 @@ def generate_summary_view():
     if count_summary_results_and(conditions) >= MAX_SUMMARIES_PER_MONTH:
         return jsonify({"success": False, "error": "You have reached the limit for summary generation for this month"}), 400
 
-    if not is_subscription_paid(request.user.subscription_id):
+    if not is_subscription_paid(request.user.subscription_id) and not request.user.is_super_user:
         return jsonify({"success": False, "error": "Your subscription is not yet paid"}), 400
 
     if 'file' not in request.files:
@@ -108,7 +108,7 @@ def generate_text_summary_view():
     if count_summary_results_and(conditions) >= MAX_SUMMARIES_PER_MONTH:
         return jsonify({"success": False, "error": "You have reached the limit for summary generation for this month"}), 400
 
-    if not is_subscription_paid(request.user.subscription_id):
+    if not is_subscription_paid(request.user.subscription_id) and not request.user.is_super_user:
         return jsonify({"success": False, "error": "Your subscription is not yet paid"}), 400
 
     summary_id = str(uuid.uuid4())
