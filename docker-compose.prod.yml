@@ -38,7 +38,9 @@ services:
     restart: always
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: vue_app
     environment:
       - VIRTUAL_HOST=summarizerai.online,www.summarizerai.online
