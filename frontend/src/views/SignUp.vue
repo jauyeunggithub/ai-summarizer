@@ -9,6 +9,8 @@
       <router-link class="nav-link text-decoration-underline" to="/login">Log in here</router-link>
     </div>
 
+    <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
+
     <form ref="form" @submit.prevent="handleSubmit">
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
