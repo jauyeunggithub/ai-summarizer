@@ -9,7 +9,7 @@
       {{ userStore.currentUser.maxSummariesPerMonth }}
     </div>
 
-    <div class="alert alert-danger" v-if="!subscriptionPaid">
+    <div class="alert alert-danger" v-if="!subscriptionPaid && !isSuperUser">
       Your subscription is not yet paid.
     </div>
 
@@ -18,7 +18,7 @@
         type="button"
         class="btn btn-primary"
         @click="openSummarizeFileDialog()"
-        :disabled="quotaIsReached || !subscriptionPaid"
+        :disabled="(quotaIsReached || !subscriptionPaid) && !isSuperUser"
       >
         Summarize New File
       </button>
@@ -27,21 +27,25 @@
         type="button"
         class="btn btn-primary"
         @click="openSummarizeTextDialog()"
-        :disabled="quotaIsReached || !subscriptionPaid"
+        :disabled="(quotaIsReached || !subscriptionPaid) && !isSuperUser"
       >
         Summarize New Text
       </button>
     </section>
 
     <section class="my-2 d-flex align-items-center gap-2">
-      <input
-        type="search"
-        autocomplete="off"
-        class="form-control"
-        id="search"
-        placeholder="Search"
-        v-model="search"
-      />
+      <form class="d-flex align-items-center flex-grow-1 gap-2" @submit.prevent="searchResults()">
+        <input
+          type="search"
+          autocomplete="off"
+          class="form-control"
+          id="search"
+          placeholder="Search"
+          v-model="search"
+        />
+
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
 
       <select class="form-select w-25" v-model="resultsPerPage" @change="getResults()">
         <option selected disabled>Results per page</option>
@@ -204,6 +208,10 @@ export default {
       const end = page * resultsPerPage
       return `${start} - ${end} of ${totalCount}`
     },
+    isSuperUser() {
+      const { isSuperUser } = this.userStore.currentUser
+      return isSuperUser
+    },
   },
   data() {
     return {
@@ -230,6 +238,7 @@ export default {
   beforeMount() {
     this.getResults()
     this.getIsSubscriptionPaid()
+    this.userStore.getCurrentUser()
   },
   mounted() {
     this.showViewPdfFileDialogInstance = new Modal(this.$refs.viewPdfFileModal.$el)
@@ -314,6 +323,16 @@ export default {
     async getResults() {
       const { page, resultsPerPage } = this
       const args = { page, perPage: resultsPerPage }
+      const {
+        data: { results, totalCount },
+      } = await getSummariesHttp(args)
+      this.summaries = results
+      this.totalCount = totalCount
+    },
+    async searchResults() {
+      this.page = 1
+      const { page, resultsPerPage, search } = this
+      const args = { page, perPage: resultsPerPage, keyword: search }
       const {
         data: { results, totalCount },
       } = await getSummariesHttp(args)
