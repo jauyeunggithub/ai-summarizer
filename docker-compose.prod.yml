@@ -99,6 +99,8 @@ services:
       - "6000:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - webproxy
 
   celery_worker:
     build:
